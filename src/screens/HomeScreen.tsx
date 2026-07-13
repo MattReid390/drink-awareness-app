@@ -102,7 +102,7 @@ export const HomeScreen: React.FC = () => {
           onPress={() => navigation.navigate('Venues' as never)}
         >
           <Text style={styles.shortcutLabel}>Venues</Text>
-          <Text style={styles.shortcutSub}>Find pubs & bars nearby</Text>
+          <Text style={styles.shortcutSub}>Find pubs and bars nearby</Text>
         </Pressable>
 
         <View style={styles.statGap} />

@@ -67,7 +67,7 @@ export const VenueListScreen: React.FC = () => {
   const renderVenue = ({ item }: { item: Venue }) => (
     <Pressable
       style={styles.venueCard}
-      onPress={() => navigation.navigate('VenueDetail' as never)}
+      onPress={() => navigation.navigate('Venues' as never)}
     >
       <View style={styles.venueThumbnail} />
       <View style={styles.venueInfo}>
