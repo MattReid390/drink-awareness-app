@@ -2,7 +2,7 @@
 // Main entry point of the app. Shows today's stats,
 // primary log action, AI insight, and shortcuts.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import { DailyLog } from '../types';
 import { Insight } from '../services/insights';
 import { formatUnits } from '../utils';
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 export const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -30,16 +31,18 @@ export const HomeScreen: React.FC = () => {
   // Whether the insight card has been dismissed
   const [insightDismissed, setInsightDismissed] = useState(false);
 
-  // Load today's log and insight on mount
-  useEffect(() => {
-    const load = async () => {
-      const log = await getDailyLog();
-      setDailyLog(log);
-      const todayInsight = await getDailyInsight(log);
-      setInsight(todayInsight);
-    };
-    load();
-  }, []);
+  // Reload data every time the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      const load = async () => {
+        const log = await getDailyLog();
+        setDailyLog(log);
+        const todayInsight = await getDailyInsight(log);
+        setInsight(todayInsight);
+      };
+      load();
+    }, [])
+  );
 
   return (
     <ScrollView style={styles.container}>

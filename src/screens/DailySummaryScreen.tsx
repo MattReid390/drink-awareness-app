@@ -2,7 +2,7 @@
 // Scannable view of all drinks logged for a single day.
 // Date strip allows navigation to previous and next days.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import { StatCard, InsightCard, DrinkEntryRow, EmptyState } from '../components/
 import { DailyLog } from '../types';
 import { Insight } from '../services/insights';
 import { formatUnits, getTodayString, formatDateLong, getPreviousDay, getNextDay } from '../utils';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 export const DailySummaryScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -33,17 +33,19 @@ export const DailySummaryScreen: React.FC = () => {
   // Whether the insight card has been dismissed
   const [insightDismissed, setInsightDismissed] = useState(false);
 
-  // Load log and insight whenever the date changes
-  useEffect(() => {
-    const load = async () => {
-      const log = await getDailyLog(date);
-      setDailyLog(log);
-      setInsightDismissed(false);
-      const todayInsight = await getDailyInsight(log);
-      setInsight(todayInsight);
-    };
-    load();
-  }, [date]);
+  // Reload data every time the screen comes into focus or the date changes
+  useFocusEffect(
+    useCallback(() => {
+      const load = async () => {
+        const log = await getDailyLog(date);
+        setDailyLog(log);
+        setInsightDismissed(false);
+        const todayInsight = await getDailyInsight(log);
+        setInsight(todayInsight);
+      };
+      load();
+    }, [date])
+  );
 
   // Navigate to the previous day
   const handlePreviousDay = () => setDate(getPreviousDay(date));
