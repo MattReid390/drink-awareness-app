@@ -4,21 +4,30 @@
 // Quick-select pills allow one-tap logging (DAA-047).
 
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { saveDrink } from '../services';
 import { PresetPill } from '../components/ui';
 import { Drink, PresetDrink } from '../types';
-import { calculateUnits } from '../utils';
+import { generateId } from '../utils';
 import { useNavigation } from '@react-navigation/native';
+
+// Input validation helpers
+const validatePrice = (price: string): number | undefined => {
+  if (!price.trim()) return undefined;
+  const parsed = parseFloat(price);
+  if (isNaN(parsed)) return undefined;
+  if (parsed < 0 || parsed > 1000) return undefined;
+  return parsed;
+};
+
+const validateUnits = (units: string): number | undefined => {
+  if (!units.trim()) return undefined;
+  const parsed = parseFloat(units);
+  if (isNaN(parsed)) return undefined;
+  if (parsed <= 0 || parsed > 100) return undefined;
+  return parsed;
+};
 
 // Default quick-select preset drinks (DAA-047)
 const PRESET_DRINKS: PresetDrink[] = [
@@ -86,6 +95,9 @@ export const LogDrinkScreen: React.FC = () => {
   const [venue, setVenue] = useState('');
   const [notes, setNotes] = useState('');
 
+  // Loading state to prevent double-tap
+  const [saving, setSaving] = useState(false);
+
   // Fills the form when a preset pill is tapped
   const handlePresetPress = (preset: PresetDrink) => {
     setName(preset.name);
@@ -96,26 +108,48 @@ export const LogDrinkScreen: React.FC = () => {
 
   // Saves the drink to AsyncStorage
   const handleSave = async () => {
+    // Prevent double-tap
+    if (saving) return;
+
     // Validate required fields
     if (!name.trim()) {
       Alert.alert('Drink name required', 'Please enter a drink name.');
       return;
     }
 
+    // Validate optional numeric fields
+    const validatedPrice = validatePrice(price);
+    if (price && !validatedPrice) {
+      Alert.alert('Invalid price', 'Price must be a number between 0 and 1000.');
+      return;
+    }
+
+    const validatedUnits = validateUnits(units);
+    if (units && !validatedUnits) {
+      Alert.alert('Invalid units', 'Units must be a number between 0.01 and 100.');
+      return;
+    }
+
     const drink: Drink = {
-      id: Date.now().toString(),
+      id: generateId(),
       name: name.trim(),
       time: new Date().toISOString(),
       type: type || undefined,
       servingSize: servingSize || undefined,
-      units: units ? parseFloat(units) : undefined,
-      price: price ? parseFloat(price) : undefined,
+      units: validatedUnits,
+      price: validatedPrice,
       venue: venue || undefined,
       notes: notes || undefined,
     };
 
-    await saveDrink(drink);
-    navigation.goBack();
+    setSaving(true);
+    try {
+      await saveDrink(drink);
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save drink. Please try again.');
+      setSaving(false);
+    }
   };
 
   return (
@@ -142,11 +176,7 @@ export const LogDrinkScreen: React.FC = () => {
         contentContainerStyle={styles.pillContent}
       >
         {PRESET_DRINKS.map((preset) => (
-          <PresetPill
-            key={preset.id}
-            preset={preset}
-            onPress={handlePresetPress}
-          />
+          <PresetPill key={preset.id} preset={preset} onPress={handlePresetPress} />
         ))}
       </ScrollView>
 
@@ -252,15 +282,16 @@ export const LogDrinkScreen: React.FC = () => {
       </View>
 
       {/* Save button */}
-      <Pressable style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Save drink</Text>
+      <Pressable
+        style={[styles.saveButton, saving && styles.saveButtonDisabled]}
+        onPress={handleSave}
+        disabled={saving}
+      >
+        <Text style={styles.saveButtonText}>{saving ? 'Saving...' : 'Save drink'}</Text>
       </Pressable>
 
       {/* Cancel link */}
-      <Pressable
-        style={styles.cancelContainer}
-        onPress={() => navigation.goBack()}
-      >
+      <Pressable style={styles.cancelContainer} onPress={() => navigation.goBack()}>
         <Text style={styles.cancelText}>Cancel</Text>
       </Pressable>
     </ScrollView>
@@ -375,6 +406,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  saveButtonDisabled: {
+    opacity: 0.5,
   },
   saveButtonText: {
     fontFamily: Typography.fontFamily,

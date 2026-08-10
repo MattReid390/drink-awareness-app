@@ -18,18 +18,9 @@ export const SummaryStackNavigator: React.FC = () => {
       }}
       initialRouteName="WeeklySummary"
     >
-      <Stack.Screen
-        name="WeeklySummary"
-        component={WeeklySummaryScreen}
-      />
-      <Stack.Screen
-        name="DailySummary"
-        component={DailySummaryScreen}
-      />
-      <Stack.Screen
-        name="AIInsights"
-        component={AIInsightsScreen}
-      />
+      <Stack.Screen name="WeeklySummary" component={WeeklySummaryScreen} />
+      <Stack.Screen name="DailySummary" component={DailySummaryScreen} />
+      <Stack.Screen name="AIInsights" component={AIInsightsScreen} />
     </Stack.Navigator>
   );
 };

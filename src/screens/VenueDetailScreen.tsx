@@ -3,13 +3,7 @@
 // Shows hero image, name, address, hours, and links to drink menu.
 
 import React from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Venue } from '../types';
@@ -75,7 +69,7 @@ export const VenueDetailScreen: React.FC = () => {
           <View style={styles.detailRow}>
             <Text style={styles.detailIcon}>🕐</Text>
             <View style={styles.detailContent}>
-              <Text style={styles.detailLabel}>Today's hours</Text>
+              <Text style={styles.detailLabel}>Hours today</Text>
               <Text style={styles.detailValue}>
                 {(venue.hours as any)[getTodayDayName()] || 'Hours not available'}
               </Text>
@@ -98,16 +92,13 @@ export const VenueDetailScreen: React.FC = () => {
       {/* Primary action — view drink menu */}
       <Pressable
         style={styles.primaryButton}
-        onPress={() => navigation.navigate('DrinkDetail' as never, { venue })}
+        onPress={() => (navigation as any).navigate('DrinkDetail', { venue })}
       >
         <Text style={styles.primaryButtonText}>View drink menu</Text>
       </Pressable>
 
       {/* Secondary action — log drink here */}
-      <Pressable
-        style={styles.secondaryButton}
-        onPress={() => navigation.navigate('Log' as never)}
-      >
+      <Pressable style={styles.secondaryButton} onPress={() => (navigation as any).navigate('Log')}>
         <Text style={styles.secondaryButtonText}>Log a drink here</Text>
       </Pressable>
     </ScrollView>

@@ -2,21 +2,15 @@
 // Scannable view of all drinks logged for a single day.
 // Date strip allows navigation to previous and next days.
 
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  FlatList,
-  StyleSheet,
-} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { getDailyLog, getDailyInsight } from '../services';
 import { StatCard, InsightCard, DrinkEntryRow, EmptyState } from '../components/ui';
 import { DailyLog } from '../types';
 import { Insight } from '../services/insights';
 import { formatUnits, getTodayString, formatDateLong, getPreviousDay, getNextDay } from '../utils';
-import { useNavigation, useFocusEffect, useIsFocused, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
 import { SummaryStackParamList } from '../types';
 
 type DailySummaryRouteProp = RouteProp<SummaryStackParamList, 'DailySummary'>;
@@ -75,25 +69,15 @@ export const DailySummaryScreen: React.FC = () => {
         </Pressable>
         <Text style={styles.dateLabel}>{formatDateLong(date)}</Text>
         <Pressable onPress={handleNextDay} disabled={isToday}>
-          <Text style={[styles.chevron, isToday && styles.chevronDisabled]}>
-            ›
-          </Text>
+          <Text style={[styles.chevron, isToday && styles.chevronDisabled]}>›</Text>
         </Pressable>
       </View>
 
       {/* Stat cards */}
       <View style={styles.statRow}>
-        <StatCard
-          label="DRINKS"
-          value={String(dailyLog?.totalDrinks ?? 0)}
-          subLabel="today"
-        />
+        <StatCard label="DRINKS" value={String(dailyLog?.totalDrinks ?? 0)} subLabel="today" />
         <View style={styles.statGap} />
-        <StatCard
-          label="UNITS"
-          value={formatUnits(dailyLog?.totalUnits ?? 0)}
-          subLabel="today"
-        />
+        <StatCard label="UNITS" value={formatUnits(dailyLog?.totalUnits ?? 0)} subLabel="today" />
         <View style={styles.statGap} />
         <StatCard
           label="SPENT"
@@ -108,9 +92,7 @@ export const DailySummaryScreen: React.FC = () => {
       {/* Logged drinks header */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Logged drinks</Text>
-        <Text style={styles.entryCount}>
-          {dailyLog?.totalDrinks ?? 0} entries
-        </Text>
+        <Text style={styles.entryCount}>{dailyLog?.totalDrinks ?? 0} entries</Text>
       </View>
 
       {/* Drink list or empty state */}
@@ -120,7 +102,7 @@ export const DailySummaryScreen: React.FC = () => {
             icon="🍺"
             headline="Nothing logged today"
             ctaLabel="Log your first drink"
-            onPressCta={() => navigation.navigate('Log' as never)}
+            onPressCta={() => (navigation as any).navigate('Log')}
           />
         </View>
       ) : (
@@ -144,10 +126,7 @@ export const DailySummaryScreen: React.FC = () => {
       )}
 
       {/* Log another drink button */}
-      <Pressable
-        style={styles.logButton}
-        onPress={() => navigation.navigate('Log' as never)}
-      >
+      <Pressable style={styles.logButton} onPress={() => (navigation as any).navigate('Log')}>
         <Text style={styles.logButtonText}>+ Log another drink</Text>
       </Pressable>
     </View>

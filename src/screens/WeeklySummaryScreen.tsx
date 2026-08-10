@@ -3,35 +3,20 @@
 // Highest-rated feature in research (8 participants).
 // Tapping a day row navigates to S10 for that date.
 
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  FlatList,
-  StyleSheet,
-} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { getWeeklyLog } from '../services';
 import { StatCard, EmptyState } from '../components/ui';
 import { WeeklyLog, DailyLog } from '../types';
-import {
-  formatUnits,
-  getTodayString,
-  getWeekStart,
-  getWeekEnd,
-  formatDateShort,
-  getDayName,
-} from '../utils';
+import { formatUnits, getTodayString, getWeekStart, formatDateShort, getDayName } from '../utils';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 export const WeeklySummaryScreen: React.FC = () => {
   const navigation = useNavigation();
 
   // Start date of the currently viewed week
-  const [weekStart, setWeekStart] = useState(
-    getWeekStart(getTodayString())
-  );
+  const [weekStart, setWeekStart] = useState(getWeekStart(getTodayString()));
 
   // Weekly log data
   const [weeklyLog, setWeeklyLog] = useState<WeeklyLog | null>(null);
@@ -67,10 +52,7 @@ export const WeeklySummaryScreen: React.FC = () => {
   const isCurrentWeek = weekStart === getWeekStart(getTodayString());
 
   // Find the max drinks in any single day for bar chart scaling
-  const maxDrinks = Math.max(
-    1,
-    ...(weeklyLog?.days.map((d) => d.totalDrinks) ?? [0])
-  );
+  const maxDrinks = Math.max(1, ...(weeklyLog?.days.map((d) => d.totalDrinks) ?? [0]));
 
   const renderDayRow = ({ item }: { item: DailyLog }) => {
     const isToday = item.date === getTodayString();
@@ -78,9 +60,7 @@ export const WeeklySummaryScreen: React.FC = () => {
     return (
       <Pressable
         style={styles.dayRow}
-        onPress={() =>
-          navigation.navigate('DailySummary' as never, { date: item.date })
-        }
+        onPress={() => (navigation as any).navigate('DailySummary', { date: item.date })}
       >
         <View style={styles.dayInfo}>
           <Text style={[styles.dayName, isToday && styles.dayNameToday]}>
@@ -92,9 +72,7 @@ export const WeeklySummaryScreen: React.FC = () => {
           <Text style={styles.dayDrinks}>
             {item.totalDrinks} drink{item.totalDrinks !== 1 ? 's' : ''}
           </Text>
-          <Text style={styles.dayUnits}>
-            {formatUnits(item.totalUnits)} units
-          </Text>
+          <Text style={styles.dayUnits}>{formatUnits(item.totalUnits)} units</Text>
         </View>
         <Text style={styles.chevron}>›</Text>
       </Pressable>
@@ -119,14 +97,7 @@ export const WeeklySummaryScreen: React.FC = () => {
             : '…'}
         </Text>
         <Pressable onPress={handleNextWeek} disabled={isCurrentWeek}>
-          <Text
-            style={[
-              styles.chevronNav,
-              isCurrentWeek && styles.chevronDisabled,
-            ]}
-          >
-            ›
-          </Text>
+          <Text style={[styles.chevronNav, isCurrentWeek && styles.chevronDisabled]}>›</Text>
         </Pressable>
       </View>
 
@@ -134,15 +105,10 @@ export const WeeklySummaryScreen: React.FC = () => {
       <View style={styles.chartArea}>
         {weeklyLog?.days.map((day) => {
           const isToday = day.date === getTodayString();
-          const barHeight = Math.max(
-            4,
-            (day.totalDrinks / maxDrinks) * 80
-          );
+          const barHeight = Math.max(4, (day.totalDrinks / maxDrinks) * 80);
           return (
             <View key={day.date} style={styles.barColumn}>
-              <Text style={styles.barValue}>
-                {day.totalDrinks > 0 ? day.totalDrinks : ''}
-              </Text>
+              <Text style={styles.barValue}>{day.totalDrinks > 0 ? day.totalDrinks : ''}</Text>
               <View
                 style={[
                   styles.bar,
@@ -151,9 +117,7 @@ export const WeeklySummaryScreen: React.FC = () => {
                   day.totalDrinks === 0 && styles.barEmpty,
                 ]}
               />
-              <Text style={styles.barLabel}>
-                {getDayName(day.date)}
-              </Text>
+              <Text style={styles.barLabel}>{getDayName(day.date)}</Text>
             </View>
           );
         })}
@@ -161,11 +125,7 @@ export const WeeklySummaryScreen: React.FC = () => {
 
       {/* Stats row */}
       <View style={styles.statRow}>
-        <StatCard
-          label="DRINKS"
-          value={String(weeklyLog?.totalDrinks ?? 0)}
-          subLabel="this week"
-        />
+        <StatCard label="DRINKS" value={String(weeklyLog?.totalDrinks ?? 0)} subLabel="this week" />
         <View style={styles.statGap} />
         <StatCard
           label="UNITS"

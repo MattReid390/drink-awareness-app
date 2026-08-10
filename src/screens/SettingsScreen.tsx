@@ -3,23 +3,11 @@
 // Reinforces local-first, no-account approach (DAA-050).
 // Tone: practical and matter-of-fact, not preachy.
 
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Alert,
-  Linking,
-  ScrollView,
-} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, Pressable, StyleSheet, Alert, Linking, ScrollView } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import {
-  resetAllData,
-  getWeeklyUnitGoal,
-  saveWeeklyUnitGoal,
-} from '../services';
+import { resetAllData, getWeeklyUnitGoal, saveWeeklyUnitGoal } from '../services';
 
 export const SettingsScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -82,9 +70,7 @@ export const SettingsScreen: React.FC = () => {
 
   // Opens the NHS unit guidelines page
   const handleUnitGuidelines = () => {
-    Linking.openURL(
-      'https://www.nhs.uk/live-well/alcohol-advice/calculating-alcohol-units/'
-    );
+    Linking.openURL('https://www.nhs.uk/live-well/alcohol-advice/calculating-alcohol-units/');
   };
 
   return (
@@ -104,9 +90,7 @@ export const SettingsScreen: React.FC = () => {
         <Pressable style={styles.row} onPress={handleEditGoal}>
           <View style={styles.rowContent}>
             <Text style={styles.rowLabel}>Weekly unit goal</Text>
-            <Text style={styles.rowSub}>
-              NHS recommends no more than 14 units per week
-            </Text>
+            <Text style={styles.rowSub}>NHS recommends no more than 14 units per week</Text>
           </View>
           <Text style={styles.rowValue}>{weeklyGoal} units</Text>
         </Pressable>

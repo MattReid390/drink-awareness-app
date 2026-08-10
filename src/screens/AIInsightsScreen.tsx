@@ -3,14 +3,8 @@
 // Every insight shows its data basis (DAA-049).
 // All insights are individually dismissable.
 
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { getDailyLog, getWeeklyLog, getDailyInsight, getWeeklyInsight } from '../services';
 import { InsightCard, EmptyState } from '../components/ui';
@@ -69,9 +63,7 @@ export const AIInsightsScreen: React.FC = () => {
   };
 
   // Visible insights — those not yet dismissed
-  const visibleInsights = insights.filter(
-    (insight) => !dismissed.includes(insight.id)
-  );
+  const visibleInsights = insights.filter((insight) => !dismissed.includes(insight.id));
 
   return (
     <View style={styles.container}>

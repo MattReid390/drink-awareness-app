@@ -4,12 +4,7 @@
 // Requires react-native-maps (already in tech stack).
 
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Colors, Typography, Spacing } from '../constants';
 import { Venue } from '../types';
@@ -68,21 +63,14 @@ export const MapScreen: React.FC = () => {
       </View>
 
       {/* Full-screen map */}
-      <MapView
-        style={styles.map}
-        initialRegion={DEFAULT_REGION}
-      >
+      <MapView style={styles.map} initialRegion={DEFAULT_REGION}>
         {PLACEHOLDER_VENUES.map((venue) =>
           venue.coordinates ? (
             <Marker
               key={venue.id}
               coordinate={venue.coordinates}
               onPress={() => setSelectedVenue(venue)}
-              pinColor={
-                selectedVenue?.id === venue.id
-                  ? Colors.navy
-                  : Colors.blue
-              }
+              pinColor={selectedVenue?.id === venue.id ? Colors.navy : Colors.blue}
               title={venue.name}
             />
           ) : null
@@ -99,9 +87,7 @@ export const MapScreen: React.FC = () => {
           </Text>
           <Pressable
             style={styles.menuButton}
-            onPress={() =>
-              navigation.navigate('VenueDetail' as never, { venue: selectedVenue })
-            }
+            onPress={() => (navigation as any).navigate('VenueDetail', { venue: selectedVenue })}
           >
             <Text style={styles.menuButtonText}>View details</Text>
           </Pressable>

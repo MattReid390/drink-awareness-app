@@ -19,22 +19,10 @@ export const VenueStackNavigator: React.FC = () => {
       }}
       initialRouteName="VenueList"
     >
-      <Stack.Screen
-        name="VenueList"
-        component={VenueListScreen}
-      />
-      <Stack.Screen
-        name="MapView"
-        component={MapScreen}
-      />
-      <Stack.Screen
-        name="VenueDetail"
-        component={VenueDetailScreen}
-      />
-      <Stack.Screen
-        name="DrinkDetail"
-        component={DrinkMenuScreen}
-      />
+      <Stack.Screen name="VenueList" component={VenueListScreen} />
+      <Stack.Screen name="MapView" component={MapScreen} />
+      <Stack.Screen name="VenueDetail" component={VenueDetailScreen} />
+      <Stack.Screen name="DrinkDetail" component={DrinkMenuScreen} />
     </Stack.Navigator>
   );
 };

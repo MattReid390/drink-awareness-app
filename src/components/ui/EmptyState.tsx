@@ -1,23 +1,18 @@
 // Reusable empty state component
 // Used on Venues (S04), Daily Summary (S10), Weekly Summary (S11), and AI Insights (S12)
 
-import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Colors, Typography, Spacing } from "../../constants";
+import React from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { Colors, Typography, Spacing } from '../../constants';
 
 interface EmptyStateProps {
-  icon: string;             // Emoji or icon character
-  headline: string;         // e.g. "No venues found nearby"
-  ctaLabel: string;         // e.g. "Log your first drink"
-  onPressCta: () => void;   // Called when the CTA is tapped
-};
+  icon: string; // Emoji or icon character
+  headline: string; // e.g. "No venues found nearby"
+  ctaLabel: string; // e.g. "Log your first drink"
+  onPressCta: () => void; // Called when the CTA is tapped
+}
 
-export const EmptyState: React.FC<EmptyStateProps> = ({
-  icon,
-  headline,
-  ctaLabel,
-  onPressCta,
-}) => {
+export const EmptyState: React.FC<EmptyStateProps> = ({ icon, headline, ctaLabel, onPressCta }) => {
   return (
     <View style={styles.container}>
       <View style={styles.iconCircle}>

@@ -3,15 +3,7 @@
 // Supports text search and filter pills.
 
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, TextInput, FlatList, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { EmptyState } from '../components/ui';
 import { Venue } from '../types';
@@ -62,28 +54,21 @@ export const VenueListScreen: React.FC = () => {
 
   // Filter venues by search query and active filter
   const filteredVenues = PLACEHOLDER_VENUES.filter((venue) => {
-    const matchesQuery = venue.name
-      .toLowerCase()
-      .includes(query.toLowerCase());
-    const matchesFilter =
-      activeFilter === 'All' || venue.type === activeFilter;
+    const matchesQuery = venue.name.toLowerCase().includes(query.toLowerCase());
+    const matchesFilter = activeFilter === 'All' || venue.type === activeFilter;
     return matchesQuery && matchesFilter;
   });
 
   const renderVenue = ({ item }: { item: Venue }) => (
     <Pressable
       style={styles.venueCard}
-      onPress={() => navigation.navigate('VenueDetail' as never, { venue: item })}
+      onPress={() => (navigation as any).navigate('VenueDetail', { venue: item })}
     >
       <View style={styles.venueThumbnail} />
       <View style={styles.venueInfo}>
         <Text style={styles.venueName}>{item.name}</Text>
         <Text style={styles.venueType}>{item.type}</Text>
-        {item.distance && (
-          <Text style={styles.venueDistance}>
-            {item.distance}m away
-          </Text>
-        )}
+        {item.distance && <Text style={styles.venueDistance}>{item.distance}m away</Text>}
       </View>
       <Text style={styles.chevron}>›</Text>
     </Pressable>
@@ -120,10 +105,7 @@ export const VenueListScreen: React.FC = () => {
         {FILTERS.map((filter) => (
           <Pressable
             key={filter}
-            style={[
-              styles.filterPill,
-              activeFilter === filter && styles.filterPillActive,
-            ]}
+            style={[styles.filterPill, activeFilter === filter && styles.filterPillActive]}
             onPress={() => setActiveFilter(filter)}
           >
             <Text
@@ -149,11 +131,7 @@ export const VenueListScreen: React.FC = () => {
           />
         </View>
       ) : (
-        <FlatList
-          data={filteredVenues}
-          keyExtractor={(item) => item.id}
-          renderItem={renderVenue}
-        />
+        <FlatList data={filteredVenues} keyExtractor={(item) => item.id} renderItem={renderVenue} />
       )}
     </View>
   );

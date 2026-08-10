@@ -3,14 +3,7 @@
 // Items grouped by category with quick-log tap to pre-fill S08.
 
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  SectionList,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, Pressable, SectionList, ScrollView, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { DrinkMenuItem, Venue } from '../types';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
@@ -28,7 +21,7 @@ const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
         venueId: '1',
         name: 'Pint of Lager',
         category: 'Beers',
-        price: 5.20,
+        price: 5.2,
         abv: 4.0,
       },
       {
@@ -36,7 +29,7 @@ const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
         venueId: '1',
         name: 'Pint of Ale',
         category: 'Beers',
-        price: 5.80,
+        price: 5.8,
         abv: 4.5,
       },
       {
@@ -44,7 +37,7 @@ const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
         venueId: '1',
         name: 'Bottle of Beer',
         category: 'Beers',
-        price: 4.50,
+        price: 4.5,
         abv: 5.0,
       },
     ],
@@ -57,7 +50,7 @@ const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
         venueId: '1',
         name: 'White Wine 175ml',
         category: 'Wines',
-        price: 6.50,
+        price: 6.5,
         abv: 12.0,
       },
       {
@@ -65,7 +58,7 @@ const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
         venueId: '1',
         name: 'Red Wine 175ml',
         category: 'Wines',
-        price: 6.50,
+        price: 6.5,
         abv: 13.5,
       },
     ],
@@ -78,7 +71,7 @@ const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
         venueId: '1',
         name: 'Gin & Tonic',
         category: 'Spirits',
-        price: 7.00,
+        price: 7.0,
         abv: 37.5,
       },
       {
@@ -86,7 +79,7 @@ const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
         venueId: '1',
         name: 'Whisky & Mixer',
         category: 'Spirits',
-        price: 7.50,
+        price: 7.5,
         abv: 40.0,
       },
     ],
@@ -116,35 +109,24 @@ export const DrinkMenuScreen: React.FC = () => {
   const filteredMenu =
     activeCategory === 'All'
       ? PLACEHOLDER_MENU
-      : PLACEHOLDER_MENU.filter(
-          (section) => section.title === activeCategory
-        );
+      : PLACEHOLDER_MENU.filter((section) => section.title === activeCategory);
 
   const renderItem = ({ item }: { item: DrinkMenuItem }) => (
     <View style={styles.itemRow}>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        {item.abv && (
-          <Text style={styles.itemAbv}>{item.abv}% ABV</Text>
-        )}
+        {item.abv && <Text style={styles.itemAbv}>{item.abv}% ABV</Text>}
       </View>
       <Text style={styles.itemPrice}>£{item.price.toFixed(2)}</Text>
 
       {/* Quick-log button — pre-fills S08 with this drink */}
-      <Pressable
-        style={styles.logButton}
-        onPress={() => navigation.navigate('Log' as never)}
-      >
+      <Pressable style={styles.logButton} onPress={() => navigation.navigate('Log' as never)}>
         <Text style={styles.logButtonText}>+</Text>
       </Pressable>
     </View>
   );
 
-  const renderSectionHeader = ({
-    section,
-  }: {
-    section: { title: string };
-  }) => (
+  const renderSectionHeader = ({ section }: { section: { title: string } }) => (
     <View style={styles.sectionHeader}>
       <Text style={styles.sectionTitle}>{section.title}</Text>
     </View>
@@ -171,18 +153,10 @@ export const DrinkMenuScreen: React.FC = () => {
         {CATEGORIES.map((category) => (
           <Pressable
             key={category}
-            style={[
-              styles.tab,
-              activeCategory === category && styles.tabActive,
-            ]}
+            style={[styles.tab, activeCategory === category && styles.tabActive]}
             onPress={() => setActiveCategory(category)}
           >
-            <Text
-              style={[
-                styles.tabText,
-                activeCategory === category && styles.tabTextActive,
-              ]}
-            >
+            <Text style={[styles.tabText, activeCategory === category && styles.tabTextActive]}>
               {category}
             </Text>
           </Pressable>

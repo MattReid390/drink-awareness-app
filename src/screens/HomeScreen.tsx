@@ -2,14 +2,8 @@
 // Main entry point of the app. Shows today's stats,
 // primary log action, AI insight, and shortcuts.
 
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { getDailyLog, getDailyInsight } from '../services';
 import { StatCard, InsightCard } from '../components/ui';
@@ -59,17 +53,9 @@ export const HomeScreen: React.FC = () => {
 
         {/* Stat cards */}
         <View style={styles.statRow}>
-          <StatCard
-            label="DRINKS"
-            value={String(dailyLog?.totalDrinks ?? 0)}
-            subLabel="today"
-          />
+          <StatCard label="DRINKS" value={String(dailyLog?.totalDrinks ?? 0)} subLabel="today" />
           <View style={styles.statGap} />
-          <StatCard
-            label="UNITS"
-            value={formatUnits(dailyLog?.totalUnits ?? 0)}
-            subLabel="today"
-          />
+          <StatCard label="UNITS" value={formatUnits(dailyLog?.totalUnits ?? 0)} subLabel="today" />
           <View style={styles.statGap} />
           <StatCard
             label="SPENT"
@@ -80,10 +66,7 @@ export const HomeScreen: React.FC = () => {
       </View>
 
       {/* Log drink button */}
-      <Pressable
-        style={styles.logButton}
-        onPress={() => navigation.navigate('Log' as never)}
-      >
+      <Pressable style={styles.logButton} onPress={() => (navigation as any).navigate('Log')}>
         <Text style={styles.logButtonText}>+ Log a drink</Text>
       </Pressable>
 
@@ -102,7 +85,7 @@ export const HomeScreen: React.FC = () => {
       <View style={styles.shortcutRow}>
         <Pressable
           style={styles.shortcutCard}
-          onPress={() => navigation.navigate('Venues' as never)}
+          onPress={() => (navigation as any).navigate('Venues')}
         >
           <Text style={styles.shortcutLabel}>Venues</Text>
           <Text style={styles.shortcutSub}>Find pubs and bars nearby</Text>
@@ -112,7 +95,7 @@ export const HomeScreen: React.FC = () => {
 
         <Pressable
           style={styles.shortcutCard}
-          onPress={() => navigation.navigate('Summary' as never)}
+          onPress={() => (navigation as any).navigate('Summary')}
         >
           <Text style={styles.shortcutLabel}>This week</Text>
           <Text style={styles.shortcutSub}>View weekly summary</Text>
@@ -123,10 +106,12 @@ export const HomeScreen: React.FC = () => {
       <View style={styles.section}>
         <Pressable
           style={styles.insightShortcut}
-          onPress={() => navigation.navigate('Summary' as never, { screen: 'AIInsights' } as never)}
+          onPress={() => (navigation as any).navigate('Summary', { screen: 'AIInsights' })}
         >
           <Text style={styles.insightShortcutLabel}>💡 View all insights</Text>
-          <Text style={styles.insightShortcutSub}>See AI-generated insights for today and this week</Text>
+          <Text style={styles.insightShortcutSub}>
+            See AI-generated insights for today and this week
+          </Text>
         </Pressable>
       </View>
     </ScrollView>
