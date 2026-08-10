@@ -23,7 +23,7 @@ const fetchAPIInsight = async (
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': process.env.EXPO_PUBLIC_ANTHROPIC_KEY ?? '',
+                'x-api-key': process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY ?? '',
                 'anthropic-version': '2023-06-01',
             },
             body: JSON.stringify({
@@ -75,9 +75,9 @@ const getFallBackDailyInsight = (log: DailyLog): string => {
         return "You haven't logged any drinks today - a good day to stay hydrated.";
     }
     if (log.totalUnits > 6) {
-        return "You've logged ${log.totalUnits} units today. Worth keeping an eye on the rest of the week.";
+        return `You've logged ${log.totalUnits} units today. Worth keeping an eye on the rest of the week.`;
     }
-    return "You've logged ${log.totalDrinks} drink${log.totalDrinks > 1 ? 's' : ''} today, totalling ${log.totalUnits} units.";
+    return `You've logged ${log.totalDrinks} drink${log.totalDrinks > 1 ? 's' : ''} today, totalling ${log.totalUnits} units.`;
 };
 
 const getFallbackWeeklyInsight = (log: WeeklyLog): string => {
@@ -85,9 +85,9 @@ const getFallbackWeeklyInsight = (log: WeeklyLog): string => {
         return "No drinks logged this week - a great baseline to track from.";
     }
     if (log.totalUnits > WEEKLY_UNIT_LIMIT) {
-        return "You've logged ${log.totalUnits} units this week, above the ${WEEKLY_UNIT_LIMIT}-unit guideline. Useful to know for planning ahead.";
+        return `You've logged ${log.totalUnits} units this week, above the ${WEEKLY_UNIT_LIMIT}-unit guideline. Useful to know for planning ahead.`;
     }
-    return "You've logged ${log.totalUnits} units across ${log.totalDrinks} drink${log.totalDrinks > 1 ? 's' : ''} this week.";
+    return `You've logged ${log.totalUnits} units across ${log.totalDrinks} drink${log.totalDrinks > 1 ? 's' : ''} this week.`;
 };
 
 // --- Public API ---------------------------------------------------

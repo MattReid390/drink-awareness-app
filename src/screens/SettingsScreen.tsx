@@ -3,7 +3,7 @@
 // Reinforces local-first, no-account approach (DAA-050).
 // Tone: practical and matter-of-fact, not preachy.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,8 +11,10 @@ import {
   StyleSheet,
   Alert,
   Linking,
+  ScrollView,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   resetAllData,
   getWeeklyUnitGoal,
@@ -20,17 +22,21 @@ import {
 } from '../services';
 
 export const SettingsScreen: React.FC = () => {
+  const navigation = useNavigation();
+
   // User's current weekly unit goal
   const [weeklyGoal, setWeeklyGoal] = useState(14);
 
-  // Load saved weekly goal on mount
-  useEffect(() => {
-    const load = async () => {
-      const goal = await getWeeklyUnitGoal();
-      setWeeklyGoal(goal);
-    };
-    load();
-  }, []);
+  // Reload settings whenever screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      const load = async () => {
+        const goal = await getWeeklyUnitGoal();
+        setWeeklyGoal(goal);
+      };
+      load();
+    }, [])
+  );
 
   // Prompts user to update their weekly unit goal
   const handleEditGoal = () => {
@@ -62,6 +68,7 @@ export const SettingsScreen: React.FC = () => {
           onPress: async () => {
             await resetAllData();
             setWeeklyGoal(14);
+            navigation.navigate('Home' as never);
           },
         },
       ]
@@ -87,66 +94,68 @@ export const SettingsScreen: React.FC = () => {
         <Text style={styles.appBarTitle}>Settings</Text>
       </View>
 
-      {/* Preferences section */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Preferences</Text>
-      </View>
+      <ScrollView>
+        {/* Preferences section */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Preferences</Text>
+        </View>
 
-      {/* Weekly unit goal row */}
-      <Pressable style={styles.row} onPress={handleEditGoal}>
-        <View style={styles.rowContent}>
-          <Text style={styles.rowLabel}>Weekly unit goal</Text>
-          <Text style={styles.rowSub}>
-            NHS recommends no more than 14 units per week
+        {/* Weekly unit goal row */}
+        <Pressable style={styles.row} onPress={handleEditGoal}>
+          <View style={styles.rowContent}>
+            <Text style={styles.rowLabel}>Weekly unit goal</Text>
+            <Text style={styles.rowSub}>
+              NHS recommends no more than 14 units per week
+            </Text>
+          </View>
+          <Text style={styles.rowValue}>{weeklyGoal} units</Text>
+        </Pressable>
+
+        {/* Responsible use section */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Responsible use</Text>
+        </View>
+
+        {/* About this app row */}
+        <View style={styles.row}>
+          <View style={styles.rowContent}>
+            <Text style={styles.rowLabel}>About this app</Text>
+            <Text style={styles.rowSub}>
+              Drink Aware is a personal awareness tool, not medical advice
+            </Text>
+          </View>
+        </View>
+
+        {/* UK unit guidelines row */}
+        <Pressable style={styles.row} onPress={handleUnitGuidelines}>
+          <View style={styles.rowContent}>
+            <Text style={styles.rowLabel}>UK unit guidelines</Text>
+            <Text style={styles.rowSub}>View NHS alcohol unit guidance</Text>
+          </View>
+          <Text style={styles.rowChevron}>›</Text>
+        </Pressable>
+
+        {/* Support resources row */}
+        <Pressable style={styles.row} onPress={handleSupportResources}>
+          <View style={styles.rowContent}>
+            <Text style={styles.rowLabel}>Support resources</Text>
+            <Text style={styles.rowSub}>NHS alcohol advice and support</Text>
+          </View>
+          <Text style={styles.rowChevron}>›</Text>
+        </Pressable>
+
+        {/* Reset all data row — destructive */}
+        <Pressable style={styles.row} onPress={handleReset}>
+          <Text style={styles.destructiveLabel}>Reset all data</Text>
+        </Pressable>
+
+        {/* Local-first footnote */}
+        <View style={styles.footnoteContainer}>
+          <Text style={styles.footnote}>
+            No account, no sign-in. All your data stays on this device.
           </Text>
         </View>
-        <Text style={styles.rowValue}>{weeklyGoal} units</Text>
-      </Pressable>
-
-      {/* Responsible use section */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Responsible use</Text>
-      </View>
-
-      {/* About this app row */}
-      <View style={styles.row}>
-        <View style={styles.rowContent}>
-          <Text style={styles.rowLabel}>About this app</Text>
-          <Text style={styles.rowSub}>
-            Drink Aware is a personal awareness tool, not medical advice
-          </Text>
-        </View>
-      </View>
-
-      {/* UK unit guidelines row */}
-      <Pressable style={styles.row} onPress={handleUnitGuidelines}>
-        <View style={styles.rowContent}>
-          <Text style={styles.rowLabel}>UK unit guidelines</Text>
-          <Text style={styles.rowSub}>View NHS alcohol unit guidance</Text>
-        </View>
-        <Text style={styles.rowChevron}>›</Text>
-      </Pressable>
-
-      {/* Support resources row */}
-      <Pressable style={styles.row} onPress={handleSupportResources}>
-        <View style={styles.rowContent}>
-          <Text style={styles.rowLabel}>Support resources</Text>
-          <Text style={styles.rowSub}>NHS alcohol advice and support</Text>
-        </View>
-        <Text style={styles.rowChevron}>›</Text>
-      </Pressable>
-
-      {/* Reset all data row — destructive */}
-      <Pressable style={styles.row} onPress={handleReset}>
-        <Text style={styles.destructiveLabel}>Reset all data</Text>
-      </Pressable>
-
-      {/* Local-first footnote */}
-      <View style={styles.footnoteContainer}>
-        <Text style={styles.footnote}>
-          No account, no sign-in. All your data stays on this device.
-        </Text>
-      </View>
+      </ScrollView>
     </View>
   );
 };

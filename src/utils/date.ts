@@ -88,3 +88,9 @@ export const getDayName = (dateString: string): string => {
         weekday: 'short',
     });
 };
+
+// Returns today's day name in lowercase for opening hours lookup (e.g. monday, tuesday)
+export const getTodayDayName = (): string => {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    return days[new Date().getDay()];
+};

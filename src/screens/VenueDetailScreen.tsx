@@ -11,10 +11,14 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Venue } from '../types';
+import { VenueStackParamList } from '../types';
+import { getTodayDayName } from '../utils';
 
-// Placeholder venue — will be replaced with nav params in Phase 5
+type VenueDetailRouteProp = RouteProp<VenueStackParamList, 'VenueDetail'>;
+
+// Placeholder venue fallback if no params provided
 const PLACEHOLDER_VENUE: Venue = {
   id: '1',
   name: 'The Anchor',
@@ -34,7 +38,8 @@ const PLACEHOLDER_VENUE: Venue = {
 
 export const VenueDetailScreen: React.FC = () => {
   const navigation = useNavigation();
-  const venue = PLACEHOLDER_VENUE;
+  const route = useRoute<VenueDetailRouteProp>();
+  const venue = route.params?.venue ?? PLACEHOLDER_VENUE;
 
   return (
     <ScrollView style={styles.container}>
@@ -72,7 +77,7 @@ export const VenueDetailScreen: React.FC = () => {
             <View style={styles.detailContent}>
               <Text style={styles.detailLabel}>Today's hours</Text>
               <Text style={styles.detailValue}>
-                {venue.hours.monday}
+                {(venue.hours as any)[getTodayDayName()] || 'Hours not available'}
               </Text>
             </View>
           </View>
@@ -93,7 +98,7 @@ export const VenueDetailScreen: React.FC = () => {
       {/* Primary action — view drink menu */}
       <Pressable
         style={styles.primaryButton}
-        onPress={() => navigation.navigate('DrinkMenu' as never)}
+        onPress={() => navigation.navigate('DrinkDetail' as never, { venue })}
       >
         <Text style={styles.primaryButtonText}>View drink menu</Text>
       </Pressable>

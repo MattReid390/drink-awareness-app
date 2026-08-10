@@ -3,7 +3,7 @@
 // Highest-rated feature in research (8 participants).
 // Tapping a day row navigates to S10 for that date.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { getWeeklyLog } from '../services';
-import { StatCard } from '../components/ui';
+import { StatCard, EmptyState } from '../components/ui';
 import { WeeklyLog, DailyLog } from '../types';
 import {
   formatUnits,
@@ -23,7 +23,7 @@ import {
   formatDateShort,
   getDayName,
 } from '../utils';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 export const WeeklySummaryScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -36,14 +36,16 @@ export const WeeklySummaryScreen: React.FC = () => {
   // Weekly log data
   const [weeklyLog, setWeeklyLog] = useState<WeeklyLog | null>(null);
 
-  // Load weekly log whenever the week changes
-  useEffect(() => {
-    const load = async () => {
-      const log = await getWeeklyLog(weekStart);
-      setWeeklyLog(log);
-    };
-    load();
-  }, [weekStart]);
+  // Reload data whenever screen comes into focus or week changes
+  useFocusEffect(
+    useCallback(() => {
+      const load = async () => {
+        const log = await getWeeklyLog(weekStart);
+        setWeeklyLog(log);
+      };
+      load();
+    }, [weekStart])
+  );
 
   // Navigate to the previous week
   const handlePreviousWeek = () => {
@@ -77,7 +79,7 @@ export const WeeklySummaryScreen: React.FC = () => {
       <Pressable
         style={styles.dayRow}
         onPress={() =>
-          navigation.navigate('Summary' as never)
+          navigation.navigate('DailySummary' as never, { date: item.date })
         }
       >
         <View style={styles.dayInfo}>
@@ -178,17 +180,31 @@ export const WeeklySummaryScreen: React.FC = () => {
         />
       </View>
 
-      {/* Days list header */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>This week</Text>
-      </View>
+      {/* Empty state or day rows */}
+      {weeklyLog && weeklyLog.totalDrinks === 0 ? (
+        <View style={styles.emptyContainer}>
+          <EmptyState
+            icon="🍺"
+            headline="No drinks logged this week"
+            ctaLabel="Log your first drink"
+            onPressCta={() => navigation.navigate('Log' as never)}
+          />
+        </View>
+      ) : (
+        <>
+          {/* Days list header */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>This week</Text>
+          </View>
 
-      {/* Day rows */}
-      <FlatList
-        data={weeklyLog?.days}
-        keyExtractor={(item) => item.date}
-        renderItem={renderDayRow}
-      />
+          {/* Day rows */}
+          <FlatList
+            data={weeklyLog?.days}
+            keyExtractor={(item) => item.date}
+            renderItem={renderDayRow}
+          />
+        </>
+      )}
     </View>
   );
 };
@@ -341,5 +357,9 @@ const styles = StyleSheet.create({
   chevron: {
     fontSize: 20,
     color: Colors.border,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
 });

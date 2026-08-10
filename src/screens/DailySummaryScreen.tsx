@@ -16,13 +16,17 @@ import { StatCard, InsightCard, DrinkEntryRow, EmptyState } from '../components/
 import { DailyLog } from '../types';
 import { Insight } from '../services/insights';
 import { formatUnits, getTodayString, formatDateLong, getPreviousDay, getNextDay } from '../utils';
-import { useNavigation, useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, useIsFocused, useRoute, RouteProp } from '@react-navigation/native';
+import { SummaryStackParamList } from '../types';
+
+type DailySummaryRouteProp = RouteProp<SummaryStackParamList, 'DailySummary'>;
 
 export const DailySummaryScreen: React.FC = () => {
   const navigation = useNavigation();
+  const route = useRoute<DailySummaryRouteProp>();
 
-  // Currently viewed date
-  const [date, setDate] = useState(getTodayString());
+  // Currently viewed date — defaults to today, but can be passed from Weekly Summary
+  const [date, setDate] = useState(route.params?.date ?? getTodayString());
 
   // Log data for the current date
   const [dailyLog, setDailyLog] = useState<DailyLog | null>(null);

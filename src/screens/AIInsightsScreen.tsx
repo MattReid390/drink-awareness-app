@@ -3,7 +3,7 @@
 // Every insight shows its data basis (DAA-049).
 // All insights are individually dismissable.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import { getDailyLog, getWeeklyLog, getDailyInsight, getWeeklyInsight } from '..
 import { InsightCard, EmptyState } from '../components/ui';
 import { Insight } from '../services/insights';
 import { getTodayString } from '../utils';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 export const AIInsightsScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -57,9 +57,11 @@ export const AIInsightsScreen: React.FC = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    loadInsights();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadInsights();
+    }, [])
+  );
 
   // Dismiss an insight card by ID
   const handleDismiss = (id: string) => {

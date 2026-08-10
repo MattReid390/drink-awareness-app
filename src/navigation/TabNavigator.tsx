@@ -9,9 +9,9 @@ import { TabParamList } from "../types";
 
 // Screens
 import { HomeScreen } from '../screens/HomeScreen';
-import { VenueListScreen } from '../screens/VenueListScreen';
 import { LogDrinkScreen } from '../screens/LogDrinkScreen';
-import { DailySummaryScreen } from '../screens/DailySummaryScreen';
+import { SummaryStackNavigator } from './SummaryStackNavigator';
+import { VenueStackNavigator } from './VenueStackNavigator';
 import { SettingsScreen } from '../screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -53,9 +53,9 @@ export const TabNavigator: React.FC = () => {
             })}
         >
             <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Venues" component={VenueListScreen}/>
+            <Tab.Screen name="Venues" component={VenueStackNavigator}/>
             <Tab.Screen name="Log" component={LogDrinkScreen}/>
-            <Tab.Screen name="Summary" component={DailySummaryScreen}/>
+            <Tab.Screen name="Summary" component={SummaryStackNavigator}/>
             <Tab.Screen name="Settings" component={SettingsScreen}/>
         </Tab.Navigator>
     );

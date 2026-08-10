@@ -26,22 +26,28 @@ const PLACEHOLDER_VENUES: Venue[] = [
     id: '1',
     name: 'The Anchor',
     type: 'Pub',
-    address: '12 High Street',
+    address: '12 High Street, London, EC1A 1BB',
     distance: 320,
+    coordinates: { latitude: 51.505, longitude: -0.09 },
+    phone: '020 7123 4567',
   },
   {
     id: '2',
     name: 'The Crown',
     type: 'Pub',
-    address: '45 Market Square',
+    address: '45 Market Square, London, EC1A 2AB',
     distance: 650,
+    coordinates: { latitude: 51.507, longitude: -0.087 },
+    phone: '020 7456 7890',
   },
   {
     id: '3',
     name: 'Neon Bar',
     type: 'Bar',
-    address: '8 Canal Street',
+    address: '8 Canal Street, London, EC1A 3CD',
     distance: 900,
+    coordinates: { latitude: 51.503, longitude: -0.093 },
+    phone: '020 7789 0123',
   },
 ];
 
@@ -67,7 +73,7 @@ export const VenueListScreen: React.FC = () => {
   const renderVenue = ({ item }: { item: Venue }) => (
     <Pressable
       style={styles.venueCard}
-      onPress={() => navigation.navigate('Venues' as never)}
+      onPress={() => navigation.navigate('VenueDetail' as never, { venue: item })}
     >
       <View style={styles.venueThumbnail} />
       <View style={styles.venueInfo}>
@@ -88,6 +94,9 @@ export const VenueListScreen: React.FC = () => {
       {/* App bar */}
       <View style={styles.appBar}>
         <Text style={styles.appBarTitle}>Venues</Text>
+        <Pressable onPress={() => navigation.navigate('MapView' as never)}>
+          <Text style={styles.mapToggle}>Map</Text>
+        </Pressable>
       </View>
 
       {/* Search bar */}
@@ -158,13 +167,20 @@ const styles = StyleSheet.create({
   appBar: {
     height: Spacing.appBar,
     backgroundColor: Colors.navy,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: Spacing.lg,
   },
   appBarTitle: {
     fontFamily: Typography.fontFamily,
     fontSize: Typography.fontSize.appBar,
     fontWeight: Typography.fontWeight.medium,
+    color: Colors.white,
+  },
+  mapToggle: {
+    fontFamily: Typography.fontFamily,
+    fontSize: Typography.fontSize.subLabel,
     color: Colors.white,
   },
   searchContainer: {

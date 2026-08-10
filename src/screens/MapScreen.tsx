@@ -100,10 +100,10 @@ export const MapScreen: React.FC = () => {
           <Pressable
             style={styles.menuButton}
             onPress={() =>
-              navigation.navigate('DrinkMenu' as never)
+              navigation.navigate('VenueDetail' as never, { venue: selectedVenue })
             }
           >
-            <Text style={styles.menuButtonText}>View drink menu</Text>
+            <Text style={styles.menuButtonText}>View details</Text>
           </Pressable>
         </View>
       )}

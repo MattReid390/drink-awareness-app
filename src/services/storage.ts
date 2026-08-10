@@ -83,7 +83,7 @@ export const getWeeklyLog = async (date?: string): Promise<WeeklyLog> => {
         weekStart,
         weekEnd,
         days,
-        totalDrinks: days.reduce((sum, d) => + d.totalDrinks, 0),
+        totalDrinks: days.reduce((sum, d) => sum + d.totalDrinks, 0),
         totalUnits: days.reduce((sum, d) => sum + d.totalUnits, 0),
         totalSpend: days.reduce((sum, d) => sum + d.totalSpend, 0),
     };

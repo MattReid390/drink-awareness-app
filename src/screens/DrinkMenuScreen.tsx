@@ -12,8 +12,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
-import { DrinkMenuItem } from '../types';
-import { useNavigation } from '@react-navigation/native';
+import { DrinkMenuItem, Venue } from '../types';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { VenueStackParamList } from '../types';
+
+type DrinkDetailRouteProp = RouteProp<VenueStackParamList, 'DrinkDetail'>;
 
 // Placeholder menu data — will be replaced with real data in Phase 5
 const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
@@ -93,8 +96,18 @@ const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
 // Category filter tabs
 const CATEGORIES = ['All', 'Beers', 'Wines', 'Spirits'];
 
+// Placeholder venue fallback if no params provided
+const PLACEHOLDER_VENUE: Venue = {
+  id: '1',
+  name: 'The Anchor',
+  type: 'Pub',
+  address: '12 High Street, London, EC1A 1BB',
+};
+
 export const DrinkMenuScreen: React.FC = () => {
   const navigation = useNavigation();
+  const route = useRoute<DrinkDetailRouteProp>();
+  const venue = route.params?.venue ?? PLACEHOLDER_VENUE;
 
   // Active category tab
   const [activeCategory, setActiveCategory] = useState('All');
@@ -144,7 +157,7 @@ export const DrinkMenuScreen: React.FC = () => {
         <Pressable onPress={() => navigation.goBack()}>
           <Text style={styles.backButton}>‹</Text>
         </Pressable>
-        <Text style={styles.appBarTitle}>Drink Menu</Text>
+        <Text style={styles.appBarTitle}>{venue?.name ?? 'Drink Menu'}</Text>
         <View style={styles.appBarSpacer} />
       </View>
 

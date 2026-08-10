@@ -118,6 +118,17 @@ export const HomeScreen: React.FC = () => {
           <Text style={styles.shortcutSub}>View weekly summary</Text>
         </Pressable>
       </View>
+
+      {/* AI Insights shortcut */}
+      <View style={styles.section}>
+        <Pressable
+          style={styles.insightShortcut}
+          onPress={() => navigation.navigate('Summary' as never, { screen: 'AIInsights' } as never)}
+        >
+          <Text style={styles.insightShortcutLabel}>💡 View all insights</Text>
+          <Text style={styles.insightShortcutSub}>See AI-generated insights for today and this week</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 };
@@ -203,6 +214,26 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
   },
   shortcutSub: {
+    fontFamily: Typography.fontFamily,
+    fontSize: Typography.fontSize.tiny,
+    color: Colors.textAccent,
+  },
+  insightShortcut: {
+    backgroundColor: Colors.white,
+    borderWidth: 0.5,
+    borderColor: Colors.border,
+    borderRadius: Spacing.cardBorderRadius,
+    padding: Spacing.md,
+    justifyContent: 'space-between',
+  },
+  insightShortcutLabel: {
+    fontFamily: Typography.fontFamily,
+    fontSize: Typography.fontSize.subLabel,
+    fontWeight: Typography.fontWeight.medium,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.xs,
+  },
+  insightShortcutSub: {
     fontFamily: Typography.fontFamily,
     fontSize: Typography.fontSize.tiny,
     color: Colors.textAccent,
