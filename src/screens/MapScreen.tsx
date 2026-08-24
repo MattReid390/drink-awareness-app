@@ -3,42 +3,14 @@
 // Toggled from VenueListScreen via the app bar.
 // Requires react-native-maps (already in tech stack).
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Colors, Typography, Spacing } from '../constants';
 import { Venue } from '../types';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { getVenues } from '../services/venues';
 
-// Placeholder venues — will be replaced with real data in Phase 5
-const PLACEHOLDER_VENUES: Venue[] = [
-  {
-    id: '1',
-    name: 'The Anchor',
-    type: 'Pub',
-    address: '12 High Street',
-    distance: 320,
-    coordinates: { latitude: 51.505, longitude: -0.09 },
-  },
-  {
-    id: '2',
-    name: 'The Crown',
-    type: 'Pub',
-    address: '45 Market Square',
-    distance: 650,
-    coordinates: { latitude: 51.507, longitude: -0.087 },
-  },
-  {
-    id: '3',
-    name: 'Neon Bar',
-    type: 'Bar',
-    address: '8 Canal Street',
-    distance: 900,
-    coordinates: { latitude: 51.503, longitude: -0.093 },
-  },
-];
-
-// Default map region — central London placeholder
 const DEFAULT_REGION = {
   latitude: 51.505,
   longitude: -0.09,
@@ -49,8 +21,22 @@ const DEFAULT_REGION = {
 export const MapScreen: React.FC = () => {
   const navigation = useNavigation();
 
-  // Currently selected venue for the bottom sheet
+  const [venues, setVenues] = useState<Venue[]>([]);
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadVenues = async () => {
+        try {
+          const data = await getVenues();
+          setVenues(data);
+        } catch (err) {
+          console.error('Failed to load venues for map:', err);
+        }
+      };
+      loadVenues();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -64,7 +50,7 @@ export const MapScreen: React.FC = () => {
 
       {/* Full-screen map */}
       <MapView style={styles.map} initialRegion={DEFAULT_REGION}>
-        {PLACEHOLDER_VENUES.map((venue) =>
+        {venues.map((venue) =>
           venue.coordinates ? (
             <Marker
               key={venue.id}

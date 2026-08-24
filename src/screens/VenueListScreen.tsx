@@ -2,58 +2,54 @@
 // Browsable and searchable list of pubs and bars.
 // Supports text search and filter pills.
 
-import React, { useState } from 'react';
-import { View, Text, TextInput, FlatList, Pressable, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { EmptyState } from '../components/ui';
 import { Venue } from '../types';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { getVenues } from '../services/venues';
 
-// Filter categories for the pill strip
-const FILTERS = ['All', 'Pub', 'Bar', 'Cocktail Bar', 'Beer Garden'];
-
-// Placeholder venue data — will be replaced with real data in Phase 5
-const PLACEHOLDER_VENUES: Venue[] = [
-  {
-    id: '1',
-    name: 'The Anchor',
-    type: 'Pub',
-    address: '12 High Street, London, EC1A 1BB',
-    distance: 320,
-    coordinates: { latitude: 51.505, longitude: -0.09 },
-    phone: '020 7123 4567',
-  },
-  {
-    id: '2',
-    name: 'The Crown',
-    type: 'Pub',
-    address: '45 Market Square, London, EC1A 2AB',
-    distance: 650,
-    coordinates: { latitude: 51.507, longitude: -0.087 },
-    phone: '020 7456 7890',
-  },
-  {
-    id: '3',
-    name: 'Neon Bar',
-    type: 'Bar',
-    address: '8 Canal Street, London, EC1A 3CD',
-    distance: 900,
-    coordinates: { latitude: 51.503, longitude: -0.093 },
-    phone: '020 7789 0123',
-  },
-];
+const FILTERS = ['All', 'Pub', 'Bar', 'Cocktail Bar', 'Beer Garden', 'Wine Bar'];
 
 export const VenueListScreen: React.FC = () => {
   const navigation = useNavigation();
 
-  // Current search query
+  const [venues, setVenues] = useState<Venue[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-
-  // Active filter pill
   const [activeFilter, setActiveFilter] = useState('All');
 
-  // Filter venues by search query and active filter
-  const filteredVenues = PLACEHOLDER_VENUES.filter((venue) => {
+  useFocusEffect(
+    useCallback(() => {
+      const loadVenues = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          const data = await getVenues();
+          setVenues(data);
+        } catch (err) {
+          setError('Could not load venues');
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadVenues();
+    }, [])
+  );
+
+  const filteredVenues = venues.filter((venue) => {
     const matchesQuery = venue.name.toLowerCase().includes(query.toLowerCase());
     const matchesFilter = activeFilter === 'All' || venue.type === activeFilter;
     return matchesQuery && matchesFilter;
@@ -121,12 +117,28 @@ export const VenueListScreen: React.FC = () => {
       </ScrollView>
 
       {/* Venue list */}
-      {filteredVenues.length === 0 ? (
+      {loading ? (
+        <View style={styles.emptyContainer}>
+          <ActivityIndicator size="large" color={Colors.blue} />
+        </View>
+      ) : error ? (
+        <View style={styles.emptyContainer}>
+          <EmptyState
+            icon="⚠️"
+            headline="Could not load venues"
+            ctaLabel="Try again"
+            onPressCta={() => {
+              setLoading(true);
+              setError(null);
+            }}
+          />
+        </View>
+      ) : filteredVenues.length === 0 ? (
         <View style={styles.emptyContainer}>
           <EmptyState
             icon="📍"
-            headline="No venues found nearby"
-            ctaLabel="Try a different search"
+            headline="No venues found"
+            ctaLabel="Clear search"
             onPressCta={() => setQuery('')}
           />
         </View>

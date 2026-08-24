@@ -2,92 +2,25 @@
 // Scrollable drink menu for a venue.
 // Items grouped by category with quick-log tap to pre-fill S08.
 
-import React, { useState } from 'react';
-import { View, Text, Pressable, SectionList, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  Pressable,
+  SectionList,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
-import { DrinkMenuItem, Venue } from '../types';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { Venue } from '../types';
+import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { VenueStackParamList } from '../types';
+import { getVenueDetail } from '../services/venues';
 
 type DrinkDetailRouteProp = RouteProp<VenueStackParamList, 'DrinkDetail'>;
 
-// Placeholder menu data — will be replaced with real data in Phase 5
-const PLACEHOLDER_MENU: { title: string; data: DrinkMenuItem[] }[] = [
-  {
-    title: 'Beers',
-    data: [
-      {
-        id: '1',
-        venueId: '1',
-        name: 'Pint of Lager',
-        category: 'Beers',
-        price: 5.2,
-        abv: 4.0,
-      },
-      {
-        id: '2',
-        venueId: '1',
-        name: 'Pint of Ale',
-        category: 'Beers',
-        price: 5.8,
-        abv: 4.5,
-      },
-      {
-        id: '3',
-        venueId: '1',
-        name: 'Bottle of Beer',
-        category: 'Beers',
-        price: 4.5,
-        abv: 5.0,
-      },
-    ],
-  },
-  {
-    title: 'Wines',
-    data: [
-      {
-        id: '4',
-        venueId: '1',
-        name: 'White Wine 175ml',
-        category: 'Wines',
-        price: 6.5,
-        abv: 12.0,
-      },
-      {
-        id: '5',
-        venueId: '1',
-        name: 'Red Wine 175ml',
-        category: 'Wines',
-        price: 6.5,
-        abv: 13.5,
-      },
-    ],
-  },
-  {
-    title: 'Spirits',
-    data: [
-      {
-        id: '6',
-        venueId: '1',
-        name: 'Gin & Tonic',
-        category: 'Spirits',
-        price: 7.0,
-        abv: 37.5,
-      },
-      {
-        id: '7',
-        venueId: '1',
-        name: 'Whisky & Mixer',
-        category: 'Spirits',
-        price: 7.5,
-        abv: 40.0,
-      },
-    ],
-  },
-];
-
-// Category filter tabs
-const CATEGORIES = ['All', 'Beers', 'Wines', 'Spirits'];
+const CATEGORIES = ['All'];
 
 // Placeholder venue fallback if no params provided
 const PLACEHOLDER_VENUE: Venue = {
@@ -100,22 +33,57 @@ const PLACEHOLDER_VENUE: Venue = {
 export const DrinkMenuScreen: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute<DrinkDetailRouteProp>();
-  const venue = route.params?.venue ?? PLACEHOLDER_VENUE;
+  const venueParam = route.params?.venue ?? PLACEHOLDER_VENUE;
 
-  // Active category tab
+  const [venue, setVenue] = useState<Venue | null>(venueParam);
+  const [menu, setMenu] = useState<{ title: string; data: any[] }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState('All');
 
-  // Filter menu sections by active category
-  const filteredMenu =
-    activeCategory === 'All'
-      ? PLACEHOLDER_MENU
-      : PLACEHOLDER_MENU.filter((section) => section.title === activeCategory);
+  useFocusEffect(
+    useCallback(() => {
+      const loadVenueDetail = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          const detail = await getVenueDetail(venueParam.id);
+          if (detail) {
+            setVenue(detail);
+            const drinks = (detail as any).drinks || [];
+            setMenu([
+              {
+                title: 'Drinks',
+                data: drinks.map((d: any) => ({
+                  id: String(d.id),
+                  venueId: String(detail.id),
+                  name: d.name,
+                  category: 'Drinks',
+                  price: d.price,
+                  units: d.units,
+                })),
+              },
+            ]);
+          }
+        } catch (err) {
+          setError('Could not load drinks');
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadVenueDetail();
+    }, [venueParam.id])
+  );
 
-  const renderItem = ({ item }: { item: DrinkMenuItem }) => (
+  const filteredMenu =
+    activeCategory === 'All' ? menu : menu.filter((section) => section.title === activeCategory);
+
+  const renderItem = ({ item }: { item: any }) => (
     <View style={styles.itemRow}>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        {item.abv && <Text style={styles.itemAbv}>{item.abv}% ABV</Text>}
+        {item.units && <Text style={styles.itemAbv}>{item.units} units</Text>}
       </View>
       <Text style={styles.itemPrice}>£{item.price.toFixed(2)}</Text>
 
@@ -164,12 +132,26 @@ export const DrinkMenuScreen: React.FC = () => {
       </ScrollView>
 
       {/* Menu list grouped by category */}
-      <SectionList
-        sections={filteredMenu}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        renderSectionHeader={renderSectionHeader}
-      />
+      {loading ? (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={Colors.blue} />
+        </View>
+      ) : error ? (
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : filteredMenu.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <Text style={styles.emptyText}>No drinks available</Text>
+        </View>
+      ) : (
+        <SectionList
+          sections={filteredMenu}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          renderSectionHeader={renderSectionHeader}
+        />
+      )}
     </View>
   );
 };
@@ -283,5 +265,20 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.appBar,
     color: Colors.white,
     lineHeight: 22,
+  },
+  centerContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  errorText: {
+    fontFamily: Typography.fontFamily,
+    fontSize: Typography.fontSize.label,
+    color: Colors.textPrimary,
+  },
+  emptyText: {
+    fontFamily: Typography.fontFamily,
+    fontSize: Typography.fontSize.label,
+    color: Colors.textAccent,
   },
 });
