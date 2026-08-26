@@ -16,12 +16,17 @@ export const Colors = {
   green: '#1A5C35', // Success states only
   amber: '#7A5C00', // Warning states only
   red: '#5C1A1A', // Destructive actions only (e.g. reset data)
+  errorBg: '#F9E8E8', // Light red background for error messages
 
   // Text roles - named by purpose rather than appearance
   textPrimary: '#1B3A5C', // Main context text
   textAccent: '#2E6DA4', // Secondary text, labels, sub-labels
   textLight: '#D6E8F7', // Text on dark backgrounds (e.g. age confirmation screen)
   textMuted: '#C5D8EC', // Inactive nav labels, placeholder text
+
+  // Grayscale - used for inputs, placeholders, and borders
+  gray: '#8B95A8', // Input placeholder text, secondary labels
+  lightGray: '#D1D9E3', // Light borders, disabled elements
 } as const;
 
 // Allows TypeScript to validate color references throughout the app

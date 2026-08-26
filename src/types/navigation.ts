@@ -4,8 +4,9 @@
 import { Drink } from './drink';
 import { Venue } from './venue';
 
-// Root stack - handles age confirmation gate before main app
+// Root stack - handles authentication and age confirmation gates
 export type RootStackParamList = {
+  Auth: undefined; // No params - authentication flow
   AgeConfirmation: undefined; // No params - first launch only
   MainTabs: undefined; // No params - entry to tab navigator
 };

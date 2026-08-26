@@ -17,3 +17,19 @@ export {
 export { getDailyInsight, getWeeklyInsight } from './insights';
 
 export type { Insight } from './insights';
+
+export {
+  signup,
+  login,
+  logout,
+  refreshAuthToken,
+  verifyEmail,
+  requestPasswordReset,
+  resetPassword,
+  getAuthToken,
+  getRefreshToken,
+  isAuthenticated,
+  getCurrentUser,
+} from './auth';
+
+export { api } from './api';

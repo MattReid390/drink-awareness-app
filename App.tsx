@@ -9,30 +9,32 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Colors } from './src/constants';
 import { getAgeConfirmed } from './src/services';
+import { isAuthenticated } from './src/services/auth';
 import { AgeConfirmationScreen } from './src/screens/AgeConfirmationScreen';
+import { AuthStackNavigator } from './src/navigation/AuthStackNavigator';
 import { TabNavigator } from './src/navigation';
 import { RootStackParamList } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  // Whether the user has already confirmed their age
   const [ageConfirmed, setAgeConfirmed] = useState(false);
-
-  // Whether the app is still checking AsyncStorage on launch
+  const [authenticated, setAuthenticated] = useState(false);
   const [checking, setChecking] = useState(true);
 
-  // Check age confirmation status on first launch
   useEffect(() => {
     const check = async () => {
-      const confirmed = await getAgeConfirmed();
-      setAgeConfirmed(confirmed);
+      const [age, auth] = await Promise.all([
+        getAgeConfirmed(),
+        isAuthenticated(),
+      ]);
+      setAgeConfirmed(age);
+      setAuthenticated(auth);
       setChecking(false);
     };
     check();
   }, []);
 
-  // Show a blank loading screen while checking AsyncStorage
   if (checking) {
     return (
       <View style={styles.loading}>
@@ -44,8 +46,15 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!ageConfirmed ? (
-          // Show age confirmation gate on first launch
+        {!authenticated ? (
+          <Stack.Screen
+            name="Auth"
+          >
+            {() => (
+              <AuthStackNavigator onAuthComplete={() => setAuthenticated(true)} />
+            )}
+          </Stack.Screen>
+        ) : !ageConfirmed ? (
           <Stack.Screen name="AgeConfirmation">
             {() => (
               <AgeConfirmationScreen
@@ -54,7 +63,6 @@ export default function App() {
             )}
           </Stack.Screen>
         ) : (
-          // Show main tab navigator once age is confirmed
           <Stack.Screen name="MainTabs" component={TabNavigator} />
         )}
       </Stack.Navigator>
