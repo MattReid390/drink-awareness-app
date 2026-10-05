@@ -37,3 +37,11 @@ export {
 } from './auth';
 
 export { api } from './api';
+
+export { syncManager } from './sync';
+
+export type { SyncStatus, SyncConflict } from './sync';
+
+export { offlineQueue } from './offlineQueue';
+
+export type { QueuedOperation } from './offlineQueue';

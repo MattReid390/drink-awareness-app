@@ -11,6 +11,7 @@ import { TrendAnalyticsScreen } from '../screens/TrendAnalyticsScreen';
 import { GoalProgressScreen } from '../screens/GoalProgressScreen';
 import { CostAnalysisScreen } from '../screens/CostAnalysisScreen';
 import { VenueAnalyticsScreen } from '../screens/VenueAnalyticsScreen';
+import { SyncStatusScreen } from '../screens/SyncStatusScreen';
 
 const Stack = createNativeStackNavigator<SummaryStackParamList>();
 
@@ -29,6 +30,7 @@ export const SummaryStackNavigator: React.FC = () => {
       <Stack.Screen name="GoalProgress" component={GoalProgressScreen} />
       <Stack.Screen name="CostAnalysis" component={CostAnalysisScreen} />
       <Stack.Screen name="VenueAnalytics" component={VenueAnalyticsScreen} />
+      <Stack.Screen name="SyncStatus" component={SyncStatusScreen} />
     </Stack.Navigator>
   );
 };

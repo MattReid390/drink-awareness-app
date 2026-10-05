@@ -37,6 +37,7 @@ export type SummaryStackParamList = {
   GoalProgress: undefined; // S16 - goal tracker
   CostAnalysis: undefined; // S17 - spending analysis
   VenueAnalytics: undefined; // S18 - venue frequency
+  SyncStatus: undefined; // S19 - cloud sync status
 };
 
 // Log stack - nested inside Log tab
