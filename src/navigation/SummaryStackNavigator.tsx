@@ -19,6 +19,7 @@ import { DataImportScreen } from '../screens/DataImportScreen';
 import { PremiumScreen } from '../screens/PremiumScreen';
 import { CoachingScreen } from '../screens/CoachingScreen';
 import { HealthIntegrationScreen } from '../screens/HealthIntegrationScreen';
+import { NotificationSettingsScreen } from '../screens/NotificationSettingsScreen';
 
 const Stack = createNativeStackNavigator<SummaryStackParamList>();
 
@@ -45,6 +46,7 @@ export const SummaryStackNavigator: React.FC = () => {
       <Stack.Screen name="Premium" component={PremiumScreen} />
       <Stack.Screen name="Coaching" component={CoachingScreen} />
       <Stack.Screen name="HealthIntegration" component={HealthIntegrationScreen} />
+      <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
     </Stack.Navigator>
   );
 };

@@ -12,10 +12,21 @@
         {
           "networkPermission": "Allow $(PRODUCT_NAME) to access your network"
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#001858",
+          "sounds": ["./assets/notification-sound.wav"]
+        }
       ]
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSUserNotificationUsageDescription": "We send notifications about your drinking goals and achievements"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +38,8 @@
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "android.permission.INTERNET",
-        "android.permission.ACCESS_NETWORK_STATE"
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.POST_NOTIFICATIONS"
       ]
     },
     "web": {

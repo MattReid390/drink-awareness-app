@@ -12,6 +12,7 @@ import { getAgeConfirmed } from './src/services';
 import { isAuthenticated } from './src/services/auth';
 import { networkStatusManager } from './src/services/networkStatus';
 import { syncManager } from './src/services/sync';
+import { notificationsManager } from './src/services/notifications';
 import { AgeConfirmationScreen } from './src/screens/AgeConfirmationScreen';
 import { AuthStackNavigator } from './src/navigation/AuthStackNavigator';
 import { TabNavigator } from './src/navigation';
@@ -44,9 +45,30 @@ export default function App() {
         } catch (error) {
           console.log('[App] Initial sync failed, will retry when online');
         }
+
+        // Register for push notifications
+        try {
+          await notificationsManager.registerDeviceToken();
+        } catch (error) {
+          console.log('[App] Failed to register for push notifications');
+        }
       }
     };
     check();
+  }, []);
+
+  // Listen for notification responses (when user taps notification)
+  useEffect(() => {
+    const unsubscribe = notificationsManager.subscribeToNotifications(
+      (notification) => {
+        const deepLink = notification.request.content.data.deepLink;
+        if (deepLink) {
+          console.log('[App] Deep link from notification:', deepLink);
+        }
+      }
+    );
+
+    return unsubscribe;
   }, []);
 
   if (checking) {

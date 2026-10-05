@@ -44,6 +44,21 @@ export type { SyncStatus, SyncConflict } from './sync';
 
 export { networkStatusManager } from './networkStatus';
 
+export { notificationsManager } from './notifications';
+
+export { localNotificationsManager } from './localNotifications';
+
+export { achievementsManager } from './achievements';
+
+export type {
+  NotificationType,
+  NotificationPayload,
+  DeviceToken,
+  NotificationPreferences,
+  StreakData,
+  MilestoneEvent,
+} from '../types/notification';
+
 export { offlineQueue } from './offlineQueue';
 
 export type { QueuedOperation } from './offlineQueue';

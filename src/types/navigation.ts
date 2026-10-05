@@ -45,6 +45,7 @@ export type SummaryStackParamList = {
   Premium: undefined; // S24 - subscription and premium features
   Coaching: undefined; // S25 - AI coaching recommendations
   HealthIntegration: undefined; // S26 - health app integration
+  NotificationSettings: undefined; // S27 - notification preferences
 };
 
 // Log stack - nested inside Log tab
