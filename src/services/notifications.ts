@@ -24,11 +24,13 @@ class NotificationsManager {
         return false;
       }
 
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      const result = await Notifications.getPermissionsAsync();
+      const existingStatus = (result as any).status;
 
       let finalStatus = existingStatus;
       if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
+        const result2 = await Notifications.requestPermissionsAsync();
+        const status = (result2 as any).status;
         finalStatus = status;
       }
 

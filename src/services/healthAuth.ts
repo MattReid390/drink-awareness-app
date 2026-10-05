@@ -40,7 +40,7 @@ class HealthAuthService {
       // For now, we'll use a backend endpoint to initiate OAuth
       const redirectUrl = AuthSession.getRedirectUrl();
 
-      const result = await AuthSession.startAsync({
+      const result = await (AuthSession as any).startAsync({
         authUrl: `http://localhost:3000/oauth/apple-health?redirect_uri=${encodeURIComponent(redirectUrl)}`,
         returnUrl: redirectUrl,
       });
@@ -72,7 +72,7 @@ class HealthAuthService {
     try {
       const redirectUrl = AuthSession.getRedirectUrl();
 
-      const result = await AuthSession.startAsync({
+      const result = await (AuthSession as any).startAsync({
         authUrl:
           `https://accounts.google.com/o/oauth2/v2/auth?` +
           `client_id=${this.googleOAuthConfig.clientId}&` +

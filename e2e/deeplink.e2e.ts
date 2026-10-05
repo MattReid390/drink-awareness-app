@@ -1,6 +1,6 @@
 // E2E: Deep linking & navigation - Custom schemes, universal links, deep link handling
 
-import { deepLinkManager, DeepLinkData } from '../src/services/deepLink';
+import { deepLinkManager } from '../src/services/deepLink';
 
 describe('Deep Linking Flow', () => {
   describe('Custom Scheme (drinkawareness://)', () => {

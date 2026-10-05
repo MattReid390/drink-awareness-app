@@ -44,8 +44,5 @@ function recordMetric(name: string, durationMs: number): void {
   performanceMetrics[name].count++;
   performanceMetrics[name].totalMs += durationMs;
 
-  // Log slow operations (>500ms)
-  if (durationMs > 500) {
-    console.warn(`[Performance] ${name} took ${durationMs}ms`);
-  }
+  // Slow operations (>500ms) logged by monitoring system
 }

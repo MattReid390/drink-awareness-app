@@ -4,7 +4,7 @@ import { syncManager } from '../src/services/sync';
 import { optimisticStateManager } from '../src/services/optimisticState';
 import { changeTracker } from '../src/services/changeTracking';
 import { networkStatusManager } from '../src/services/networkStatus';
-import { saveDrink, getAllDrinks } from '../src/services/storage';
+import { saveDrink } from '../src/services/storage';
 import { Drink } from '../src/types/drink';
 import { v4 as uuidv4 } from 'uuid';
 

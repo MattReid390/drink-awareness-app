@@ -162,10 +162,8 @@ class HealthIntegrationService {
       await AsyncStorage.setItem(HEALTH_DATA_CACHE_KEY, JSON.stringify(data));
       return data;
     } catch (error) {
-      console.error('Failed to sync health data:', error);
       const cached = await this.getCachedData();
       if (cached) {
-        console.log('Returning cached health data');
         return cached;
       }
       throw error;

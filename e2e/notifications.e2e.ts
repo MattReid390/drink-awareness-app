@@ -156,7 +156,6 @@ describe('Notifications & Achievements Flow', () => {
     it('should handle notification taps', () => {
       expect(async () => {
         // Simulate notification tap event
-        const response = { notification: { request: { content: { data: {} } } } };
       }).not.toThrow();
     });
 
@@ -176,7 +175,7 @@ describe('Notifications & Achievements Flow', () => {
   describe('Notification Permissions', () => {
     it('should handle permission denials gracefully', async () => {
       // Should not crash if permissions are denied
-      const token = await notificationsManager.getDeviceToken().catch(() => null);
+      await notificationsManager.getDeviceToken().catch(() => null);
 
       // App should continue functioning
       const today = await getDailyLog(new Date().toISOString().split('T')[0]);

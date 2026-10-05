@@ -46,14 +46,14 @@ export default function App() {
         try {
           await syncManager.performSync();
         } catch (error) {
-          console.log('[App] Initial sync failed, will retry when online');
+          // Sync failed, will retry when online
         }
 
         // Register for push notifications
         try {
           await notificationsManager.registerDeviceToken();
         } catch (error) {
-          console.log('[App] Failed to register for push notifications');
+          // Failed to register, will retry later
         }
       }
     };
@@ -66,7 +66,7 @@ export default function App() {
       (notification) => {
         const deepLink = notification.request.content.data.deepLink;
         if (deepLink) {
-          console.log('[App] Deep link from notification:', deepLink);
+          // Handle deep link from notification
         }
       }
     );
@@ -76,7 +76,7 @@ export default function App() {
 
   if (checking) {
     return (
-      <View style={styles.loading}>
+      <View style={styles.container}>
         <ActivityIndicator color={Colors.blue} />
       </View>
     );
@@ -110,7 +110,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  loading: {
+  container: {
     flex: 1,
     backgroundColor: Colors.navy,
     alignItems: 'center',

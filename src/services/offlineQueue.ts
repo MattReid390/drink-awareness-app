@@ -35,7 +35,6 @@ class OfflineQueue {
     await this.initialize();
 
     if (this.queue.length >= MAX_QUEUE_SIZE) {
-      console.warn('Offline queue at capacity, dropping oldest operation');
       this.queue.shift();
     }
 

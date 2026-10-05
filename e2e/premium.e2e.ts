@@ -10,7 +10,6 @@ import {
   getHealthStatus,
 } from '../src/services/premium';
 import { stripeService } from '../src/services/stripe';
-import { claudeCoachingService } from '../src/services/claude';
 import { healthIntegrationService } from '../src/services/health';
 
 describe('Premium Features Flow', () => {
