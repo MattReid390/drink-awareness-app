@@ -3,29 +3,34 @@
     "name": "Drink Awareness",
     "slug": "drink-awareness",
     "version": "1.0.0",
-    "runtimeVersion": "1.0.0",
+    "runtimeVersion": "57.0.0",
     "orientation": "portrait",
+    "cli": {
+      "appVersionSource": "remote"
+    },
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "drinkawareness",
     "description": "Track your drinking habits with AI coaching and health insights",
-    "owner": "drinkaware",
+    "owner": "mattreid390",
     "plugins": [
-      [
-        "expo-network",
-        {
-          "networkPermission": "Allow $(PRODUCT_NAME) to access your network"
-        }
-      ],
       [
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png",
           "color": "#001858",
-          "sounds": ["./assets/notification-sound.wav"]
+          "sounds": [
+            "./assets/notification-sound.wav"
+          ]
         }
       ],
-      "@stripe/stripe-react-native"
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.drinkaware.app",
+          "enableNativePay": true
+        }
+      ]
     ],
     "ios": {
       "supportsTablet": true,
@@ -37,13 +42,20 @@
         "NSHealthShareUsageDescription": "We use your health data to provide personalized coaching and insights",
         "NSHealthUpdateUsageDescription": "We log health events when you track your drinking",
         "NSLocalNetworkUsageDescription": "We use local network for synchronization",
-        "NSBonjourServiceTypes": ["_http._tcp"],
+        "NSBonjourServiceTypes": [
+          "_http._tcp"
+        ],
         "NSCameraUsageDescription": "Camera access is not required",
-        "NSPhotoLibraryUsageDescription": "Photo library access is not required"
+        "NSPhotoLibraryUsageDescription": "Photo library access is not required",
+        "ITSAppUsesNonExemptEncryption": false
       },
-      "associatedDomains": ["applinks:drinkaware.app"],
+      "associatedDomains": [
+        "applinks:drinkaware.app"
+      ],
       "entitlements": {
-        "com.apple.developer.associated-domains": ["applinks:drinkaware.app"]
+        "com.apple.developer.associated-domains": [
+          "applinks:drinkaware.app"
+        ]
       }
     },
     "android": {
@@ -77,12 +89,20 @@
               "scheme": "drinkawareness"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a262b3e8-4b22-47e3-8a83-7bd35e48f95c"
+      }
     }
   }
 }

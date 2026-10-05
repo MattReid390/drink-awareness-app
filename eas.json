@@ -21,11 +21,9 @@
       "ios": {
         "appleId": "$APPLE_ID",
         "ascAppId": "$ASC_APP_ID",
-        "appleTeamId": "$APPLE_TEAM_ID",
-        "appleIdPassword": "$APPLE_ID_PASSWORD"
+        "appleTeamId": "$APPLE_TEAM_ID"
       },
       "android": {
-        "serviceAccount": "$ANDROID_SERVICE_ACCOUNT",
         "track": "production"
       }
     }
