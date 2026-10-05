@@ -1,12 +1,15 @@
 {
   "expo": {
-    "name": "DrinkAwarenessApp",
-    "slug": "DrinkAwarenessApp",
+    "name": "Drink Awareness",
+    "slug": "drink-awareness",
     "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "drinkawareness",
+    "description": "Track your drinking habits with AI coaching and health insights",
+    "owner": "drinkaware",
     "plugins": [
       [
         "expo-network",
@@ -26,11 +29,28 @@
     ],
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.drinkaware.app",
+      "buildNumber": "1",
+      "deploymentTarget": "13.0",
       "infoPlist": {
-        "NSUserNotificationUsageDescription": "We send notifications about your drinking goals and achievements"
+        "NSUserNotificationUsageDescription": "We send notifications about your drinking goals and achievements",
+        "NSHealthShareUsageDescription": "We use your health data to provide personalized coaching and insights",
+        "NSHealthUpdateUsageDescription": "We log health events when you track your drinking",
+        "NSLocalNetworkUsageDescription": "We use local network for synchronization",
+        "NSBonjourServiceTypes": ["_http._tcp"],
+        "NSCameraUsageDescription": "Camera access is not required",
+        "NSPhotoLibraryUsageDescription": "Photo library access is not required"
+      },
+      "associatedDomains": ["applinks:drinkaware.app"],
+      "entitlements": {
+        "com.apple.developer.associated-domains": ["applinks:drinkaware.app"]
       }
     },
     "android": {
+      "package": "com.drinkaware.app",
+      "versionCode": 1,
+      "minSdkVersion": 24,
+      "targetSdkVersion": 34,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -41,7 +61,24 @@
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",
-        "android.permission.POST_NOTIFICATIONS"
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.ACTIVITY_RECOGNITION",
+        "com.google.android.gms.permission.ACTIVITY_RECOGNITION"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "drinkaware.app"
+            },
+            {
+              "scheme": "drinkawareness"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
       ]
     },
     "web": {

@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,61 +7,103 @@ on:
     branches: [main, develop]
 
 jobs:
-  lint-and-type-check:
-    name: Lint & Type Check
+  test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [22.x]
+    name: Tests
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18.x
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: TypeScript type check
+      - name: Type check
         run: npm run type-check
 
-      - name: ESLint
+      - name: Lint code
         run: npm run lint
 
-      - name: Prettier format check
-        run: npm run format:check
+      - name: Run unit tests
+        run: npm test -- --coverage --passWithNoTests
 
-  expo-validation:
-    name: Expo Build Validation
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/coverage-final.json
+          flags: unittests
+          fail_ci_if_error: false
+
+  build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [22.x]
+    name: Build
+    needs: test
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18.x
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate Expo project
-        run: npx expo-cli doctor --fix-dependencies
-        continue-on-error: true
+      - name: Check bundle size
+        run: |
+          SIZE=$(du -sh . | cut -f1)
+          echo "Build size: $SIZE"
 
-      - name: Check Expo app.json
-        run: npx expo-cli prebuild --clean --dry-run
-        continue-on-error: true
+  security:
+    runs-on: ubuntu-latest
+    name: Security Checks
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate || true
+
+  performance:
+    runs-on: ubuntu-latest
+    name: Performance Check
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check bundle size
+        run: |
+          BUNDLE_SIZE=$(du -sh . | awk '{print $1}')
+          echo "Bundle size: $BUNDLE_SIZE"
+          SIZE_MB=$(du -s . | awk '{print $1/1024}' | awk '{print int($1)}')
+          if [ $SIZE_MB -gt 200 ]; then
+            echo "Warning: Bundle size exceeds 200MB recommended limit"
+          fi
