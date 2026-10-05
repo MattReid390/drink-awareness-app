@@ -33,6 +33,10 @@ export type SummaryStackParamList = {
   DailySummary: { date?: string }; // S10 - optional date (defaults to today)
   WeeklySummary: { weekStart?: string }; // S11 - optional week start date
   AIInsights: undefined; // S12 - no params
+  TrendAnalytics: undefined; // S15 - 30-day trends
+  GoalProgress: undefined; // S16 - goal tracker
+  CostAnalysis: undefined; // S17 - spending analysis
+  VenueAnalytics: undefined; // S18 - venue frequency
 };
 
 // Log stack - nested inside Log tab

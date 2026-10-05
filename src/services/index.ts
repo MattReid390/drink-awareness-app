@@ -18,6 +18,10 @@ export { getDailyInsight, getWeeklyInsight } from './insights';
 
 export type { Insight } from './insights';
 
+export { get30DayTrend, getGoalProgress, getCostAnalysis, getVenueFrequency } from './analytics';
+
+export type { TrendDataPoint, GoalProgress, CostDataPoint, VenueFrequency } from './analytics';
+
 export {
   signup,
   login,
