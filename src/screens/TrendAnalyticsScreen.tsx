@@ -1,11 +1,11 @@
 // S15 — 30-Day Trend Analytics
-// Visualize drinking patterns over the last 30 days
+// Visualize drinking patterns over the last 30 days using server-side data
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { StatCard, EmptyState, SkeletonCard } from '../components/ui';
-import { get30DayTrend } from '../services/analytics';
+import { get30DayTrends } from '../services/serverAnalytics';
 import { useFocusEffect } from '@react-navigation/native';
 import { cache } from '../utils/cache';
 import { performance } from '../utils/performance';
@@ -29,11 +29,18 @@ export const TrendAnalyticsScreen: React.FC = () => {
           return;
         }
 
-        // Measure and load data
-        const data = await performance.measureAsync('get30DayTrend', () => get30DayTrend());
-        cache.set(CACHE_KEY, data, 10 * 60 * 1000); // Cache for 10 minutes
-        setTrendData(data);
-        setLoading(false);
+        try {
+          // Measure and load data from server
+          const response = await performance.measureAsync('get30DayTrends', () => get30DayTrends());
+          if (response && response.trends) {
+            cache.set(CACHE_KEY, response.trends, 10 * 60 * 1000); // Cache for 10 minutes
+            setTrendData(response.trends);
+          }
+        } catch (error) {
+          console.error('Failed to load trends:', error);
+        } finally {
+          setLoading(false);
+        }
       };
       load();
     }, [])

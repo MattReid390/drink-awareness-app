@@ -45,3 +45,27 @@ export type { SyncStatus, SyncConflict } from './sync';
 export { offlineQueue } from './offlineQueue';
 
 export type { QueuedOperation } from './offlineQueue';
+
+export {
+  getUserProfile,
+  getUserWithSettings,
+  updateUserProfile,
+  getUserSettings,
+  updateUserSettings,
+} from './userProfile';
+
+export type { UserProfile, UserSettings, UserWithSettings } from './userProfile';
+
+export { get30DayTrends, getStatistics, getInsights } from './serverAnalytics';
+
+export type { TrendResponse, StatsResponse, InsightsResponse, Insight } from './serverAnalytics';
+
+export {
+  exportToCSV,
+  exportToJSON,
+  exportReport,
+  validateCSV,
+  importFromCSV,
+} from './dataExportImport';
+
+export type { ImportValidationResponse, ImportResponse } from './dataExportImport';

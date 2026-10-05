@@ -27,6 +27,8 @@ export const Colors = {
   // Grayscale - used for inputs, placeholders, and borders
   gray: '#8B95A8', // Input placeholder text, secondary labels
   lightGray: '#D1D9E3', // Light borders, disabled elements
+  lightGrey: '#D1D9E3', // Alias for lightGray (British spelling)
+  orange: '#D9731F', // Warning/attention states
 } as const;
 
 // Allows TypeScript to validate color references throughout the app

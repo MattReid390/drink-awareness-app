@@ -100,9 +100,15 @@ export const refreshAuthToken = async (): Promise<string | null> => {
       return null;
     }
 
-    const data: AuthResponse = await response.json();
-    await storeAuthTokens(data.token, data.refreshToken);
-    return data.token;
+    const data = await response.json();
+    const newToken = data.token || data.accessToken;
+    if (!newToken) {
+      await clearAuthTokens();
+      return null;
+    }
+
+    await storeAuthTokens(newToken, refreshToken);
+    return newToken;
   } catch (error) {
     console.error('Token refresh failed:', error);
     await clearAuthTokens();

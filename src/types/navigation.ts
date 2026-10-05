@@ -38,6 +38,10 @@ export type SummaryStackParamList = {
   CostAnalysis: undefined; // S17 - spending analysis
   VenueAnalytics: undefined; // S18 - venue frequency
   SyncStatus: undefined; // S19 - cloud sync status
+  UserProfile: undefined; // S20 - user profile management
+  UserSettings: undefined; // S21 - synced user settings
+  DataExport: undefined; // S22 - export drink data
+  DataImport: undefined; // S23 - import drink data
 };
 
 // Log stack - nested inside Log tab
