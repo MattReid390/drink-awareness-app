@@ -69,3 +69,18 @@ export {
 } from './dataExportImport';
 
 export type { ImportValidationResponse, ImportResponse } from './dataExportImport';
+
+export {
+  getSubscription,
+  upgradeToPremium,
+  cancelSubscription,
+  getCoaching,
+  dismissCoaching,
+  refreshCoaching,
+  getHealthStatus,
+  connectHealthProvider,
+  syncHealthData,
+  disconnectHealthProvider,
+} from './premium';
+
+export type { Subscription, CoachingSession, HealthIntegration } from './premium';

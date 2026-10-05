@@ -42,6 +42,9 @@ export type SummaryStackParamList = {
   UserSettings: undefined; // S21 - synced user settings
   DataExport: undefined; // S22 - export drink data
   DataImport: undefined; // S23 - import drink data
+  Premium: undefined; // S24 - subscription and premium features
+  Coaching: undefined; // S25 - AI coaching recommendations
+  HealthIntegration: undefined; // S26 - health app integration
 };
 
 // Log stack - nested inside Log tab
