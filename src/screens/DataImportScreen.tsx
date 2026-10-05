@@ -108,7 +108,7 @@ export const DataImportScreen: React.FC = () => {
             {validation.issues && validation.issues.length > 0 && (
               <>
                 <Text style={[styles.validationText, { marginTop: Spacing.sm }]}>Issues:</Text>
-                {validation.issues.slice(0, 3).map((issue, idx) => (
+                {validation.issues.slice(0, 3).map((issue: string, idx: number) => (
                   <Text key={idx} style={styles.issueText}>
                     • {issue}
                   </Text>

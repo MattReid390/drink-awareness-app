@@ -7,3 +7,4 @@ export { DrinkEntryRow } from './DrinkEntryRow';
 export { PresetPill } from './PresetPill';
 export { EmptyState } from './EmptyState';
 export { SkeletonLoader, SkeletonCard } from './SkeletonLoader';
+export { SyncStatusIndicator } from '../SyncStatusIndicator';

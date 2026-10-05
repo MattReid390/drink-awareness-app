@@ -10,6 +10,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Colors } from './src/constants';
 import { getAgeConfirmed } from './src/services';
 import { isAuthenticated } from './src/services/auth';
+import { networkStatusManager } from './src/services/networkStatus';
+import { syncManager } from './src/services/sync';
 import { AgeConfirmationScreen } from './src/screens/AgeConfirmationScreen';
 import { AuthStackNavigator } from './src/navigation/AuthStackNavigator';
 import { TabNavigator } from './src/navigation';
@@ -24,6 +26,9 @@ export default function App() {
 
   useEffect(() => {
     const check = async () => {
+      // Initialize network monitoring
+      await networkStatusManager.initialize();
+
       const [age, auth] = await Promise.all([
         getAgeConfirmed(),
         isAuthenticated(),
@@ -31,6 +36,15 @@ export default function App() {
       setAgeConfirmed(age);
       setAuthenticated(auth);
       setChecking(false);
+
+      // Auto-sync on app launch if authenticated
+      if (auth) {
+        try {
+          await syncManager.performSync();
+        } catch (error) {
+          console.log('[App] Initial sync failed, will retry when online');
+        }
+      }
     };
     check();
   }, []);

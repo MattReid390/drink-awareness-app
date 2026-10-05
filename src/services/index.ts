@@ -16,7 +16,7 @@ export {
 
 export { getDailyInsight, getWeeklyInsight } from './insights';
 
-export type { Insight } from './insights';
+export type { Insight as LocalInsight } from './insights';
 
 export { get30DayTrend, getGoalProgress, getCostAnalysis, getVenueFrequency } from './analytics';
 
@@ -41,6 +41,8 @@ export { api } from './api';
 export { syncManager } from './sync';
 
 export type { SyncStatus, SyncConflict } from './sync';
+
+export { networkStatusManager } from './networkStatus';
 
 export { offlineQueue } from './offlineQueue';
 
