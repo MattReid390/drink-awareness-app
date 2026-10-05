@@ -120,3 +120,7 @@ export type {
   StripeSubscriptionUpdate,
   StripePaymentIntent,
 } from './stripe';
+
+export { claudeCoachingService } from './claude';
+
+export type { CoachingRecommendation } from './claude';

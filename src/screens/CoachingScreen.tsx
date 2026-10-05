@@ -92,10 +92,15 @@ export const CoachingScreen: React.FC = () => {
       const newCoaching = await refreshCoaching();
       if (newCoaching) {
         setCoaching([newCoaching as CoachingItem, ...coaching]);
+        Alert.alert('Success', 'New recommendation generated');
       }
     } catch (error) {
-      console.error('Failed to refresh coaching:', error);
-      Alert.alert('Error', 'Failed to generate new recommendation');
+      const message = error instanceof Error ? error.message : 'Failed to generate recommendation';
+      if (message.includes('wait before generating')) {
+        Alert.alert('Wait', 'Please wait before generating another recommendation');
+      } else {
+        Alert.alert('Error', message);
+      }
     } finally {
       setRefreshing(false);
     }

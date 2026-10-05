@@ -1,5 +1,6 @@
 import { api } from './api';
 import { stripeService } from './stripe';
+import { claudeCoachingService } from './claude';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface Subscription {
@@ -91,7 +92,11 @@ export const cancelSubscription = async (): Promise<any> => {
 // Coaching endpoints
 export const getCoaching = async (): Promise<CoachingResponse | null> => {
   try {
-    return await api.get<CoachingResponse>('/premium/coaching');
+    const recommendations = await claudeCoachingService.getRecommendations();
+    return {
+      count: recommendations.length,
+      sessions: recommendations as CoachingSession[],
+    };
   } catch (error) {
     console.error('Failed to get coaching:', error);
     return null;
@@ -100,7 +105,7 @@ export const getCoaching = async (): Promise<CoachingResponse | null> => {
 
 export const dismissCoaching = async (id: number): Promise<any> => {
   try {
-    return await api.post(`/premium/coaching/${id}/dismiss`, {});
+    await claudeCoachingService.dismissRecommendation(id);
   } catch (error) {
     console.error('Failed to dismiss coaching:', error);
     throw error;
@@ -109,8 +114,8 @@ export const dismissCoaching = async (id: number): Promise<any> => {
 
 export const refreshCoaching = async (): Promise<CoachingSession | null> => {
   try {
-    const response = await api.post<CoachingSession>('/premium/coaching/refresh', {});
-    return response;
+    const recommendation = await claudeCoachingService.generateRecommendation();
+    return recommendation as CoachingSession;
   } catch (error) {
     console.error('Failed to refresh coaching:', error);
     return null;
