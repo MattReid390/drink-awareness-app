@@ -16,12 +16,12 @@ import { Colors, Typography, Spacing } from '../constants';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   getHealthStatus,
-  connectHealthProvider,
   syncHealthData,
   disconnectHealthProvider,
   HealthIntegration,
   HealthDataPoint,
 } from '../services/premium';
+import { healthAuthService } from '../services/healthAuth';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
 export const HealthIntegrationScreen: React.FC = () => {
@@ -51,39 +51,25 @@ export const HealthIntegrationScreen: React.FC = () => {
   );
 
   const handleConnect = async (provider: 'apple_health' | 'google_fit') => {
-    Alert.alert(
-      `Connect ${provider === 'apple_health' ? 'Apple Health' : 'Google Fit'}`,
-      `Allow Drink Awareness to access your health data?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Connect',
-          onPress: async () => {
-            try {
-              setConnecting(true);
-              // In production, use OAuth flow or native health kit APIs
-              // For now, simulate connection with mock token
-              await connectHealthProvider(
-                provider,
-                `mock_access_token_${provider}`,
-                `mock_refresh_token_${provider}`,
-                3600
-              );
-              setHealth({
-                connected: true,
-                provider,
-                syncedAt: new Date().toISOString(),
-              });
-              Alert.alert('Success', 'Connected successfully!');
-            } catch (error) {
-              Alert.alert('Error', 'Failed to connect. Please try again.');
-            } finally {
-              setConnecting(false);
-            }
-          },
-        },
-      ]
-    );
+    try {
+      setConnecting(true);
+      if (provider === 'apple_health') {
+        await healthAuthService.initiateAppleHealthOAuth();
+      } else {
+        await healthAuthService.initiateGoogleFitOAuth();
+      }
+
+      const status = await getHealthStatus();
+      if (status) {
+        setHealth(status);
+      }
+      Alert.alert('Success', 'Connected successfully!');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to connect';
+      Alert.alert('Connection Failed', message);
+    } finally {
+      setConnecting(false);
+    }
   };
 
   const handleSync = async () => {

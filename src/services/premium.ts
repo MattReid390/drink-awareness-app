@@ -1,6 +1,7 @@
 import { api } from './api';
 import { stripeService } from './stripe';
 import { claudeCoachingService } from './claude';
+import { healthIntegrationService } from './health';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface Subscription {
@@ -125,7 +126,16 @@ export const refreshCoaching = async (): Promise<CoachingSession | null> => {
 // Health integration endpoints
 export const getHealthStatus = async (): Promise<HealthIntegration | null> => {
   try {
-    return await api.get<HealthIntegration>('/premium/health');
+    const provider = await healthIntegrationService.getConnectedProvider();
+    if (!provider) {
+      return { connected: false };
+    }
+
+    return {
+      connected: provider.connected,
+      provider: provider.provider,
+      syncedAt: provider.syncedAt,
+    };
   } catch (error) {
     console.error('Failed to get health status:', error);
     return null;
@@ -139,12 +149,15 @@ export const connectHealthProvider = async (
   expiresIn?: number
 ): Promise<any> => {
   try {
-    return await api.post('/premium/health/connect', {
-      provider,
-      accessToken,
-      refreshToken,
-      expiresIn,
-    });
+    if (provider === 'apple_health') {
+      return await healthIntegrationService.connectAppleHealth(
+        accessToken,
+        refreshToken,
+        expiresIn
+      );
+    } else {
+      return await healthIntegrationService.connectGoogleFit(accessToken, refreshToken, expiresIn);
+    }
   } catch (error) {
     console.error('Failed to connect health provider:', error);
     throw error;
@@ -153,7 +166,22 @@ export const connectHealthProvider = async (
 
 export const syncHealthData = async (): Promise<HealthSyncResponse | null> => {
   try {
-    return await api.post<HealthSyncResponse>('/premium/health/sync', {});
+    const healthProvider = await healthIntegrationService.getConnectedProvider();
+    if (!healthProvider?.connected) {
+      throw new Error('No health provider connected');
+    }
+
+    const dataPoints = await healthIntegrationService.syncHealthData();
+    if (!dataPoints) {
+      throw new Error('Failed to sync health data');
+    }
+
+    return {
+      message: 'Health data synchronized successfully',
+      provider: healthProvider.provider,
+      syncedAt: new Date().toISOString(),
+      dataPoints,
+    };
   } catch (error) {
     console.error('Failed to sync health data:', error);
     return null;
@@ -162,7 +190,7 @@ export const syncHealthData = async (): Promise<HealthSyncResponse | null> => {
 
 export const disconnectHealthProvider = async (): Promise<any> => {
   try {
-    return await api.delete('/premium/health/disconnect');
+    await healthIntegrationService.disconnect();
   } catch (error) {
     console.error('Failed to disconnect health provider:', error);
     throw error;

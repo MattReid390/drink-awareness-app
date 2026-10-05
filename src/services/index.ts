@@ -124,3 +124,9 @@ export type {
 export { claudeCoachingService } from './claude';
 
 export type { CoachingRecommendation } from './claude';
+
+export { healthIntegrationService } from './health';
+
+export { healthAuthService } from './healthAuth';
+
+export type { HealthDataPoint, HealthProvider } from './health';
