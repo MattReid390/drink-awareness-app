@@ -5,6 +5,8 @@ import { api } from './api';
 import { getAllDrinks, saveDrink } from './storage';
 import { Drink } from '../types';
 import { isAuthenticated } from './auth';
+import { changeTracker } from './changeTracking';
+import { optimisticStateManager } from './optimisticState';
 
 export interface SyncStatus {
   isSyncing: boolean;
@@ -27,6 +29,10 @@ class SyncManager {
     syncedDrinks: 0,
     totalDrinks: 0,
   };
+
+  async initialize(): Promise<void> {
+    await changeTracker.initialize();
+  }
 
   async getStatus(): Promise<SyncStatus> {
     return this.syncStatus;
@@ -55,6 +61,35 @@ class SyncManager {
       const message = error instanceof Error ? error.message : 'Sync failed';
       this.syncStatus.error = message;
       console.error('Sync failed:', error);
+      throw error;
+    } finally {
+      this.isSyncing = false;
+      this.syncStatus.isSyncing = false;
+    }
+  }
+
+  async performSelectiveSync(): Promise<void> {
+    if (this.isSyncing) return;
+    if (!(await isAuthenticated())) {
+      throw new Error('Not authenticated. Please log in to sync.');
+    }
+
+    this.isSyncing = true;
+    this.syncStatus.isSyncing = true;
+    this.syncStatus.error = undefined;
+
+    try {
+      // Get only unsynced changes
+      const unsynced = changeTracker.getUnsyncedChanges();
+      if (unsynced.length > 0) {
+        await this.pushLocalData();
+      }
+
+      // Update sync timestamp
+      this.syncStatus.lastSyncTime = new Date().toISOString();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Sync failed';
+      this.syncStatus.error = message;
       throw error;
     } finally {
       this.isSyncing = false;
@@ -107,6 +142,11 @@ class SyncManager {
       await api.post('/api/sync/drinks', { drinks: localDrinks });
 
       this.syncStatus.syncedDrinks = localDrinks.length;
+
+      // Mark all drinks as synced
+      const syncedIds = localDrinks.map((d) => d.id);
+      await changeTracker.markSynced(syncedIds);
+      await optimisticStateManager.confirmSync(syncedIds);
     } catch (error) {
       console.error('Failed to push local data:', error);
       throw new Error('Failed to upload data to server');

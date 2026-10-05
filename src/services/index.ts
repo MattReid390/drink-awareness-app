@@ -63,6 +63,12 @@ export { deepLinkManager } from './deepLink';
 
 export type { DeepLinkData } from './deepLink';
 
+export { optimisticStateManager } from './optimisticState';
+
+export { changeTracker } from './changeTracking';
+
+export type { SyncConflictResolution, SyncMetadata, SyncableData } from '../types/sync';
+
 export { offlineQueue } from './offlineQueue';
 
 export type { QueuedOperation } from './offlineQueue';

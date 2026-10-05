@@ -30,6 +30,9 @@ export default function App() {
       // Initialize network monitoring
       await networkStatusManager.initialize();
 
+      // Initialize change tracking for offline-first
+      await syncManager.initialize();
+
       const [age, auth] = await Promise.all([
         getAgeConfirmed(),
         isAuthenticated(),
