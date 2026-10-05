@@ -21,7 +21,8 @@
           "color": "#001858",
           "sounds": ["./assets/notification-sound.wav"]
         }
-      ]
+      ],
+      "@stripe/stripe-react-native"
     ],
     "ios": {
       "supportsTablet": true,

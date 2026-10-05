@@ -43,6 +43,8 @@ export type SummaryStackParamList = {
   DataExport: undefined; // S22 - export drink data
   DataImport: undefined; // S23 - import drink data
   Premium: undefined; // S24 - subscription and premium features
+  PaymentMethods: undefined; // S29 - manage payment methods
+  Invoices: undefined; // S30 - view invoices
   Coaching: undefined; // S25 - AI coaching recommendations
   HealthIntegration: undefined; // S26 - health app integration
   NotificationSettings: undefined; // S27 - notification preferences

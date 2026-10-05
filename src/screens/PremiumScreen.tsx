@@ -1,7 +1,7 @@
 // S24 — Premium & Subscription
 // Manage subscription and access premium features
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,12 +10,14 @@ import {
   Pressable,
   Alert,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   getSubscription,
   upgradeToPremium,
+  confirmUpgradeToPremium,
   cancelSubscription,
   Subscription,
 } from '../services/premium';
@@ -84,6 +86,34 @@ export const PremiumScreen: React.FC = () => {
     }, [])
   );
 
+  useEffect(() => {
+    const handleDeepLink = ({ url }: { url: string }) => {
+      if (url.includes('payment-success')) {
+        const sessionId = new URL(url).searchParams.get('sessionId');
+        if (sessionId) {
+          handlePaymentSuccess(sessionId);
+        }
+      }
+    };
+
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+    return () => subscription.remove();
+  }, []);
+
+  const handlePaymentSuccess = async (sessionId: string) => {
+    try {
+      await confirmUpgradeToPremium(sessionId);
+      Alert.alert('Success', 'Your subscription has been activated!');
+      const sub = await getSubscription();
+      if (sub) {
+        setSubscription(sub);
+        setCurrentPlan(sub.plan);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to confirm payment. Please contact support.');
+    }
+  };
+
   const handleUpgrade = async (plan: 'premium' | 'premium_plus') => {
     Alert.alert(
       `Upgrade to ${PLANS[plan].name}`,
@@ -95,11 +125,13 @@ export const PremiumScreen: React.FC = () => {
           onPress: async () => {
             try {
               setUpgrading(true);
-              await upgradeToPremium(plan);
-              setCurrentPlan(plan);
-              Alert.alert('Success', `Upgraded to ${PLANS[plan].name}!`);
+              const session = await upgradeToPremium(plan);
+              if (session.url) {
+                await Linking.openURL(session.url);
+              }
             } catch (error) {
-              Alert.alert('Error', 'Failed to upgrade. Please try again.');
+              console.error('Upgrade error:', error);
+              Alert.alert('Error', 'Failed to start checkout. Please try again.');
             } finally {
               setUpgrading(false);
             }

@@ -1,4 +1,6 @@
 import { api } from './api';
+import { stripeService } from './stripe';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface Subscription {
   id: number;
@@ -58,9 +60,21 @@ export const getSubscription = async (): Promise<Subscription | null> => {
 
 export const upgradeToPremium = async (plan: 'premium' | 'premium_plus'): Promise<any> => {
   try {
-    return await api.post('/premium/subscription/upgrade', { plan });
+    const session = await stripeService.createCheckoutSession(plan);
+    await AsyncStorage.setItem('stripe_checkout_session', session.sessionId);
+    return session;
   } catch (error) {
     console.error('Failed to upgrade subscription:', error);
+    throw error;
+  }
+};
+
+export const confirmUpgradeToPremium = async (sessionId: string): Promise<void> => {
+  try {
+    await stripeService.handleCheckoutSuccess(sessionId);
+    await AsyncStorage.removeItem('stripe_checkout_session');
+  } catch (error) {
+    console.error('Failed to confirm upgrade:', error);
     throw error;
   }
 };

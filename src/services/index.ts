@@ -100,6 +100,7 @@ export type { ImportValidationResponse, ImportResponse } from './dataExportImpor
 export {
   getSubscription,
   upgradeToPremium,
+  confirmUpgradeToPremium,
   cancelSubscription,
   getCoaching,
   dismissCoaching,
@@ -111,3 +112,11 @@ export {
 } from './premium';
 
 export type { Subscription, CoachingSession, HealthIntegration } from './premium';
+
+export { stripeService } from './stripe';
+
+export type {
+  StripeCheckoutSession,
+  StripeSubscriptionUpdate,
+  StripePaymentIntent,
+} from './stripe';

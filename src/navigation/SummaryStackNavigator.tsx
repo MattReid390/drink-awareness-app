@@ -21,6 +21,8 @@ import { CoachingScreen } from '../screens/CoachingScreen';
 import { HealthIntegrationScreen } from '../screens/HealthIntegrationScreen';
 import { NotificationSettingsScreen } from '../screens/NotificationSettingsScreen';
 import { DeepLinkTestScreen } from '../screens/DeepLinkTestScreen';
+import { PaymentMethodsScreen } from '../screens/PaymentMethodsScreen';
+import { InvoicesScreen } from '../screens/InvoicesScreen';
 
 const Stack = createNativeStackNavigator<SummaryStackParamList>();
 
@@ -45,6 +47,8 @@ export const SummaryStackNavigator: React.FC = () => {
       <Stack.Screen name="DataExport" component={DataExportScreen} />
       <Stack.Screen name="DataImport" component={DataImportScreen} />
       <Stack.Screen name="Premium" component={PremiumScreen} />
+      <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
+      <Stack.Screen name="Invoices" component={InvoicesScreen} />
       <Stack.Screen name="Coaching" component={CoachingScreen} />
       <Stack.Screen name="HealthIntegration" component={HealthIntegrationScreen} />
       <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
