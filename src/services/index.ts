@@ -59,6 +59,10 @@ export type {
   MilestoneEvent,
 } from '../types/notification';
 
+export { deepLinkManager } from './deepLink';
+
+export type { DeepLinkData } from './deepLink';
+
 export { offlineQueue } from './offlineQueue';
 
 export type { QueuedOperation } from './offlineQueue';
