@@ -1,12 +1,16 @@
 // S15 — 30-Day Trend Analytics
 // Visualize drinking patterns over the last 30 days
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '../constants';
-import { StatCard, EmptyState } from '../components/ui';
+import { StatCard, EmptyState, SkeletonCard } from '../components/ui';
 import { get30DayTrend } from '../services/analytics';
 import { useFocusEffect } from '@react-navigation/native';
+import { cache } from '../utils/cache';
+import { performance } from '../utils/performance';
+
+const CACHE_KEY = 'trend_analytics';
 
 export const TrendAnalyticsScreen: React.FC = () => {
   const [trendData, setTrendData] = useState<
@@ -17,7 +21,17 @@ export const TrendAnalyticsScreen: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       const load = async () => {
-        const data = await get30DayTrend();
+        // Try cache first
+        const cached = cache.get<Array<{ date: string; units: number; drinks: number }>>(CACHE_KEY);
+        if (cached) {
+          setTrendData(cached);
+          setLoading(false);
+          return;
+        }
+
+        // Measure and load data
+        const data = await performance.measureAsync('get30DayTrend', () => get30DayTrend());
+        cache.set(CACHE_KEY, data, 10 * 60 * 1000); // Cache for 10 minutes
         setTrendData(data);
         setLoading(false);
       };
@@ -25,7 +39,28 @@ export const TrendAnalyticsScreen: React.FC = () => {
     }, [])
   );
 
-  if (loading || !trendData || trendData.length === 0) {
+  // Memoize calculations to avoid recalculating on every render
+  const { avgUnits, maxUnits } = useMemo(() => {
+    if (!trendData || trendData.length === 0) {
+      return { avgUnits: '0.0', maxUnits: 0 };
+    }
+    const total = trendData.reduce((sum, d) => sum + d.units, 0);
+    return {
+      avgUnits: (total / 30).toFixed(1),
+      maxUnits: Math.max(...trendData.map((d) => d.units)),
+    };
+  }, [trendData]);
+
+  if (loading) {
+    return (
+      <ScrollView contentContainerStyle={styles.container}>
+        <SkeletonCard lines={4} />
+        <SkeletonCard lines={3} />
+      </ScrollView>
+    );
+  }
+
+  if (!trendData || trendData.length === 0) {
     return (
       <EmptyState
         icon="📊"
@@ -35,10 +70,6 @@ export const TrendAnalyticsScreen: React.FC = () => {
       />
     );
   }
-
-  const totalUnits = trendData.reduce((sum, d) => sum + d.units, 0);
-  const avgUnits = (totalUnits / 30).toFixed(1);
-  const maxUnits = Math.max(...trendData.map((d) => d.units));
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
